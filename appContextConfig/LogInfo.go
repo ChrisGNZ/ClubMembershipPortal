@@ -12,7 +12,8 @@ import (
 func LogEntry(logMsg string, runtimeSkip int) string {
 	pc, file, line, ok := runtime.Caller(runtimeSkip)
 	if !ok {
-		panic("Could not get context info for logger!")
+		//panic("Could not get context info for logger!")
+		return fmt.Sprintf(" file: (could not be determined), function: (could not be determined), msg: %s", logMsg)
 	}
 
 	filename := file[strings.LastIndex(file, "/")+1:] + ":" + strconv.Itoa(line)

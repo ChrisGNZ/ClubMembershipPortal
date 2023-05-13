@@ -16,6 +16,8 @@ type ApplicationConfiguration struct {
 	DBPassword         string
 	SMTPServer         string
 	PapertrailEndPoint string
+	RecaptchaKey       string
+	RecaptchaSiteKey   string
 	AuthConfig         auth.AuthenticatorConfig
 }
 
@@ -36,7 +38,8 @@ func LoadEnvFile() (ApplicationConfiguration, error) {
 	ac.DBPassword = os.Getenv("DBPASSWORD")
 	ac.SMTPServer = os.Getenv("SMTPSERVER")
 	ac.PapertrailEndPoint = os.Getenv("PAPERTRAILENDPOINT")
+	ac.RecaptchaKey = os.Getenv("RECAPTCHAKEY")
+	ac.RecaptchaSiteKey = os.Getenv("RECAPTCHASITEKEY")
 	ac.AuthConfig = auth.LoadAuthConfigFromEnv()
-
 	return ac, nil
 }

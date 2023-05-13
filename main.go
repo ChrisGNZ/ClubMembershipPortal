@@ -3,7 +3,6 @@ package main
 import (
 	"ClubMembershipPortal/appContextConfig"
 	"ClubMembershipPortal/lib/auth"
-	"fmt"
 	"log"
 	"net/http"
 	"os"
@@ -22,8 +21,8 @@ func main() {
 
 	appCtx, status, err := appContextConfig.CreateApplicationContext(appConfig, auth)
 	if err != nil {
-		fmt.Println(status)
-		fmt.Println(err)
+		log.Println(status)
+		log.Println(err)
 		os.Exit(501)
 	}
 

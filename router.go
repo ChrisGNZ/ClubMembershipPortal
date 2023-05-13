@@ -3,6 +3,7 @@ package main
 import (
 	"ClubMembershipPortal/app/home"
 	"ClubMembershipPortal/app/login"
+	"ClubMembershipPortal/app/membershipManager"
 	"ClubMembershipPortal/appContextConfig"
 	"ClubMembershipPortal/middleware"
 	"encoding/gob"
@@ -35,10 +36,11 @@ func NewRouter(appCtx *appContextConfig.Application) *gin.Engine {
 	//router.GET("/logout", logout.Handler(appCtx))
 
 	//------------------------------------------------------------------------------------------------------------------
-	// HOME and home-page buttons
-	// Anything linked from the homepage (except for the Hamburger menu) goes here.
+	// HOME and application
 	//------------------------------------------------------------------------------------------------------------------
 	router.GET("/", middleware.IsAuthenticated, home.HomeHandler(appCtx))
 
+	router.GET("/newmembershipappform", middleware.IsAuthenticated, membershipManager.RenderForm(appCtx))
+	router.POST("/savemembershipappform", middleware.IsAuthenticated, membershipManager.SaveForm(appCtx))
 	return router
 }
