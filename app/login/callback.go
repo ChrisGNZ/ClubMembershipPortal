@@ -55,6 +55,6 @@ func Callback(appCtx *appContextConfig.Application) gin.HandlerFunc {
 		appCtx.SysLog.Info(fmt.Sprint("callback.Handler() : Success! state = ", ctx.Query("state"),
 			", code = ", ctx.Query("code"), ", token.AccessToken = ", token.AccessToken,
 			", session username = ", username))
-		ctx.Redirect(http.StatusTemporaryRedirect, "/user")
+		ctx.Redirect(http.StatusTemporaryRedirect, "/")
 	}
 }

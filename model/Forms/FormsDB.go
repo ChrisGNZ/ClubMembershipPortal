@@ -11,10 +11,14 @@ func GetFormQuestions(db *sql.DB, FormName string) ([]WebFormQuestion, error) {
 
 	sqlstr := `exec GetFormQuestions @FormName=?`
 	rows, err := db.Query(sqlstr, FormName)
-	defer rows.Close()
 	if err != nil {
 		return questions, err
 	}
+	defer func() {
+		if rows != nil {
+			rows.Close()
+		}
+	}()
 
 	q := WebFormQuestion{}
 	for rows.Next() {

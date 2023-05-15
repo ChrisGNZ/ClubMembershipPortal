@@ -2,6 +2,7 @@ package Forms
 
 import (
 	"ClubMembershipPortal/appContextConfig"
+	"fmt"
 	"strings"
 )
 
@@ -19,7 +20,7 @@ func GenerateHTML(appCtx *appContextConfig.Application, formName string) (string
 	currentRadioButtonChildren := ""
 
 	for _, q := range questions {
-
+		appCtx.LogInfo(fmt.Sprint(q.InputFieldName, ", ", q.QuestionType, ", ", q.TemplateName))
 		rpl := ""
 
 		//are we in the middle of a radio button?

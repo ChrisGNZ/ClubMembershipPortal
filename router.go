@@ -7,9 +7,11 @@ import (
 	"ClubMembershipPortal/appContextConfig"
 	"ClubMembershipPortal/middleware"
 	"encoding/gob"
+	"fmt"
 	"github.com/gin-contrib/sessions"
 	"github.com/gin-contrib/sessions/cookie"
 	"github.com/gin-gonic/gin"
+	"net/http"
 )
 
 // New registers the routes and returns the router.
@@ -40,7 +42,21 @@ func NewRouter(appCtx *appContextConfig.Application) *gin.Engine {
 	//------------------------------------------------------------------------------------------------------------------
 	router.GET("/", middleware.IsAuthenticated, home.HomeHandler(appCtx))
 
-	router.GET("/newmembershipappform", middleware.IsAuthenticated, membershipManager.RenderForm(appCtx))
-	router.POST("/savemembershipappform", middleware.IsAuthenticated, membershipManager.SaveForm(appCtx))
+	router.GET("/newmembershipappform", middleware.IsAuthenticated, membershipManager.RenderForm(appCtx, "Membership Application Form"))
+	//router.POST("/savemembershipappform", middleware.IsAuthenticated, membershipManager.SaveForm(appCtx))
+
+	//------------------------------------------------------------------------------------------------------------------
+	// troubleshooting
+	router.NoRoute(func(c *gin.Context) {
+		appCtx.LogInfo(fmt.Sprint("404 for: ", c.Request.RequestURI))
+		c.JSON(http.StatusNotFound, gin.H{"code": "PAGE_NOT_FOUND", "message": "404 page not found"})
+	})
+
+	router.NoMethod(func(c *gin.Context) {
+		appCtx.LogInfo(fmt.Sprint("405 for: ", c.Request.RequestURI))
+		c.JSON(http.StatusMethodNotAllowed, gin.H{"code": "METHOD_NOT_ALLOWED", "message": "405 method not allowed"})
+	})
+
+	//------------------------------------------------------------------------------------------------------------------
 	return router
 }
