@@ -1,21 +1,23 @@
 package Forms
 
 type WebFormQuestion struct {
-	ID             int
-	FormID         int
-	InputFieldName string
-	EntityName     string
-	QuestionText   string
-	QuestionType   string
-	TemplateName   string
-	Seq            int
-	SubSeq         int
-	AnswerRequired string
-	TextRows       int
-	RadioOption    string
-	Template1      string
-	Template2      string
-	Template3      string
+	ID                int
+	FormID            int
+	InputFieldName    string
+	EntityName        string
+	QuestionText      string
+	QuestionType      string
+	TemplateName      string
+	Seq               int
+	SubSeq            int
+	AnswerRequired    string
+	TextRows          int
+	RadioOption       string
+	Template1         string
+	Template2         string
+	Template3         string
+	QuestionLabel     string
+	QuestionExtraText string
 }
 
 // --------------------------------------------------------------------------------------------------------------------

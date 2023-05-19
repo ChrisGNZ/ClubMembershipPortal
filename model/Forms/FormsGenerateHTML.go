@@ -62,6 +62,7 @@ func GenerateHTML(appCtx *appContextConfig.Application, formName string) (string
 
 func startRadio(q WebFormQuestion) string {
 	rpl := strings.Replace(q.Template2, "{{ .InputFieldName }}", q.QuestionText, -1)
+	rpl = strings.Replace(rpl, "{{ .questionExtraText }}", q.QuestionExtraText, -1)
 	rpl += continueRadio(q)
 	return rpl
 }
@@ -87,6 +88,7 @@ func stdField(q WebFormQuestion) string {
 	rpl = strings.Replace(rpl, "{{ .InputFieldName }}", q.InputFieldName, -1)
 	rpl = strings.Replace(rpl, "{{ .questionID }}", q.InputFieldName, -1)
 	rpl = strings.Replace(rpl, "{{ .questionID }}", q.InputFieldName, -1)
+	rpl = strings.Replace(rpl, "{{ .questionExtraText }}", q.QuestionExtraText, -1)
 	rpl = strings.Replace(rpl, "{{ .questionValue }}", "", -1)
 	if q.AnswerRequired == "Y" {
 		rpl = strings.Replace(rpl, "{{ .required }}", "required", -1)

@@ -24,7 +24,7 @@ func GetFormQuestions(db *sql.DB, FormName string) ([]WebFormQuestion, error) {
 	for rows.Next() {
 		err = rows.Scan(&q.ID, &q.FormID, &q.InputFieldName, &q.EntityName, &q.QuestionText, &q.QuestionType,
 			&q.TemplateName, &q.Seq, &q.SubSeq, &q.AnswerRequired, &q.TextRows, &q.RadioOption,
-			&q.Template1, &q.Template2, &q.Template3)
+			&q.Template1, &q.Template2, &q.Template3, &q.QuestionLabel, &q.QuestionExtraText)
 		if err != nil {
 			return questions, err
 		}
