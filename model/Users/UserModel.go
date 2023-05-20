@@ -1,4 +1,4 @@
-package model
+package Users
 
 import (
 	"ClubMembershipPortal/appContextConfig"
@@ -29,6 +29,6 @@ func GetUsernameAndLogUserFromCtx(ctx *gin.Context, appCtx *appContextConfig.App
 
 	username := fmt.Sprint(profile.(map[string]interface{})["name"])
 	appCtx.SysLog.Info("Loaded Session Profile for Username: " + username)
-	
+
 	return username
 }

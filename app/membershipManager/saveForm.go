@@ -3,6 +3,8 @@ package membershipManager
 import (
 	"ClubMembershipPortal/appContextConfig"
 	"ClubMembershipPortal/model/Forms"
+	"ClubMembershipPortal/model/Logins"
+	"ClubMembershipPortal/model/Users"
 	"fmt"
 	"github.com/gin-gonic/gin"
 	"net/http"
@@ -11,6 +13,8 @@ import (
 func SaveForm(appCtx *appContextConfig.Application, formName string) gin.HandlerFunc {
 	return func(ctx *gin.Context) {
 		appCtx.LogInfo("Invoked SaveForm for : " + formName)
+		login := Logins.LogVisit(ctx, appCtx)
+		displayName := Users.AddUpdateUser(appCtx.DBconn, login.Username, login.Nickname, login.Picture, login.UserId, login.Email, login.EmailVerified, login.GivenName, login.FamilyName)
 
 		//Call to ParseForm makes form fields available.
 		err := ctx.Request.ParseForm()
@@ -53,6 +57,6 @@ func SaveForm(appCtx *appContextConfig.Application, formName string) gin.Handler
 			}
 		}
 
-		ctx.HTML(http.StatusOK, "membershipApplicationFormPage2.html", gin.H{"HeaderID": HeaderID})
+		ctx.HTML(http.StatusOK, "membershipApplicationForm2.html", gin.H{"HeaderID": HeaderID, "Username": username})
 	}
 }

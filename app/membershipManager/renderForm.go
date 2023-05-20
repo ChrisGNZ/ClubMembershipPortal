@@ -3,6 +3,7 @@ package membershipManager
 import (
 	"ClubMembershipPortal/appContextConfig"
 	"ClubMembershipPortal/model/Forms"
+	"ClubMembershipPortal/model/Logins"
 	"fmt"
 	"github.com/gin-gonic/gin"
 	"html/template"
@@ -12,6 +13,8 @@ import (
 func RenderForm(appCtx *appContextConfig.Application, formName string) gin.HandlerFunc {
 	return func(ctx *gin.Context) {
 		appCtx.LogInfo("Invoked RenderForm for : " + formName)
+		Logins.LogVisit(ctx, appCtx)
+
 		html, err := Forms.GenerateHTML(appCtx, formName)
 		if err != nil {
 			appCtx.LogInfo("Error calling Forms.GenerateHTML(" + formName + ") : " + err.Error())

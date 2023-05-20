@@ -39,10 +39,14 @@ func CreateWebFormResponseHeader(db *sql.DB, FormName string, ClientIPAddress st
 	result := Result{}
 	sqlstr := `exec CreateWebFormResponseHeader @FormName=?, @ClientIPAddress=?, @RecaptchaV3Score=?`
 	rows, err := db.Query(sqlstr, FormName, ClientIPAddress, RecaptchaV3Score)
-	defer rows.Close()
 	if err != nil {
 		return result, err
 	}
+	defer func() {
+		if rows != nil {
+			rows.Close()
+		}
+	}()
 
 	if rows.Next() {
 		err = rows.Scan(&result.ResultMessage, &result.Id)
@@ -59,10 +63,14 @@ func SaveWebFormResponseDetail(db *sql.DB, HeaderID int, InputFieldName string, 
 	result := Result{}
 	sqlstr := `exec SaveWebFormResponseDetail @HeaderID=?, @InputFieldName=?, @QuestionResponse=?`
 	rows, err := db.Query(sqlstr, HeaderID, InputFieldName, QuestionResponse)
-	defer rows.Close()
 	if err != nil {
 		return result, err
 	}
+	defer func() {
+		if rows != nil {
+			rows.Close()
+		}
+	}()
 
 	if rows.Next() {
 		err = rows.Scan(&result.ResultMessage, &result.Id)
@@ -78,10 +86,14 @@ func GetResponseHeader(db *sql.DB, HeaderID int) (WebFormHeader, error) {
 	frmHdr := WebFormHeader{}
 	sqlstr := `exec GetFormResponseHeader @HeaderID=? `
 	rows, err := db.Query(sqlstr, HeaderID)
-	defer rows.Close()
 	if err != nil {
 		return frmHdr, err
 	}
+	defer func() {
+		if rows != nil {
+			rows.Close()
+		}
+	}()
 
 	if rows.Next() {
 		err = rows.Scan(&frmHdr.ID, &frmHdr.FormID,
@@ -103,10 +115,14 @@ func GetResponseDetails(db *sql.DB, HeaderID int) ([]WebFormDetail, error) {
 	details := []WebFormDetail{}
 	sqlstr := `exec GetFormResponseDetails @HeaderID=? `
 	rows, err := db.Query(sqlstr, HeaderID)
-	defer rows.Close()
 	if err != nil {
 		return details, err
 	}
+	defer func() {
+		if rows != nil {
+			rows.Close()
+		}
+	}()
 
 	d := WebFormDetail{}
 	for rows.Next() {
@@ -125,10 +141,14 @@ func GetResponseDetails(db *sql.DB, HeaderID int) ([]WebFormDetail, error) {
 func MarkEmailSuccess(db *sql.DB, HeaderID int, EmailedTo string) error {
 	sqlstr := `exec MarkEmailSuccess @HeaderID=?, @EmailedTo=? `
 	rows, err := db.Query(sqlstr, HeaderID, EmailedTo)
-	defer rows.Close()
 	if err != nil {
 		return err
 	}
+	defer func() {
+		if rows != nil {
+			rows.Close()
+		}
+	}()
 
 	status := ""
 	for rows.Next() {

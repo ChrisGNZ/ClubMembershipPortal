@@ -2,7 +2,7 @@ package login
 
 import (
 	"ClubMembershipPortal/appContextConfig"
-	"ClubMembershipPortal/model"
+	"ClubMembershipPortal/model/Users"
 	"fmt"
 	"github.com/gin-contrib/sessions"
 	"github.com/gin-gonic/gin"
@@ -50,7 +50,7 @@ func Callback(appCtx *appContextConfig.Application) gin.HandlerFunc {
 			return
 		}
 
-		username := model.GetUsernameAndLogUserFromCtx(ctx, appCtx)
+		username := Users.GetUsernameAndLogUserFromCtx(ctx, appCtx)
 		// Redirect to logged in page.
 		appCtx.SysLog.Info(fmt.Sprint("callback.Handler() : Success! state = ", ctx.Query("state"),
 			", code = ", ctx.Query("code"), ", token.AccessToken = ", token.AccessToken,
