@@ -2,14 +2,13 @@ package Forms
 
 import (
 	"database/sql"
-	"errors"
 )
 
 // --------------------------------------------------------------------------------------------------------------------
 func GetFormQuestions(db *sql.DB, FormName string) ([]WebFormQuestion, error) {
 	questions := []WebFormQuestion{}
 
-	sqlstr := `exec GetFormQuestions @FormName=?`
+	sqlstr := `exec [FormsGetQuestions] @FormName=?`
 	rows, err := db.Query(sqlstr, FormName)
 	if err != nil {
 		return questions, err
@@ -34,11 +33,11 @@ func GetFormQuestions(db *sql.DB, FormName string) ([]WebFormQuestion, error) {
 }
 
 // --------------------------------------------------------------------------------------------------------------------
-func CreateWebFormResponseHeader(db *sql.DB, FormName string, ClientIPAddress string, RecaptchaV3Score float64) (Result, error) {
+func CreateWebFormResponseHeader(db *sql.DB, FormName string, ClientIPAddress string, RecaptchaV3Score float64, LoginSessionID string) (Result, error) {
 
 	result := Result{}
-	sqlstr := `exec CreateWebFormResponseHeader @FormName=?, @ClientIPAddress=?, @RecaptchaV3Score=?`
-	rows, err := db.Query(sqlstr, FormName, ClientIPAddress, RecaptchaV3Score)
+	sqlstr := `exec [FormsCreateResponseHeader] @FormName=?, @ClientIPAddress=?, @RecaptchaV3Score=?, @LoginSessionID=?; `
+	rows, err := db.Query(sqlstr, FormName, ClientIPAddress, RecaptchaV3Score, LoginSessionID)
 	if err != nil {
 		return result, err
 	}
@@ -61,7 +60,7 @@ func CreateWebFormResponseHeader(db *sql.DB, FormName string, ClientIPAddress st
 func SaveWebFormResponseDetail(db *sql.DB, HeaderID int, InputFieldName string, QuestionResponse string) (Result, error) {
 
 	result := Result{}
-	sqlstr := `exec SaveWebFormResponseDetail @HeaderID=?, @InputFieldName=?, @QuestionResponse=?`
+	sqlstr := `exec [FormsSaveResponseDetail] @HeaderID=?, @InputFieldName=?, @QuestionResponse=?`
 	rows, err := db.Query(sqlstr, HeaderID, InputFieldName, QuestionResponse)
 	if err != nil {
 		return result, err
@@ -84,7 +83,7 @@ func SaveWebFormResponseDetail(db *sql.DB, HeaderID int, InputFieldName string, 
 // --------------------------------------------------------------------------------------------------------------------
 func GetResponseHeader(db *sql.DB, HeaderID int) (WebFormHeader, error) {
 	frmHdr := WebFormHeader{}
-	sqlstr := `exec GetFormResponseHeader @HeaderID=? `
+	sqlstr := `exec [FormsGetResponseHeader] @HeaderID=? `
 	rows, err := db.Query(sqlstr, HeaderID)
 	if err != nil {
 		return frmHdr, err
@@ -100,6 +99,7 @@ func GetResponseHeader(db *sql.DB, HeaderID int) (WebFormHeader, error) {
 			&frmHdr.FormName, &frmHdr.FormDescription,
 			&frmHdr.DateSubmitted, &frmHdr.TimeSubmitted,
 			&frmHdr.ClientIPAddress, &frmHdr.RecaptchaV3Score,
+			&frmHdr.LoginSessionID,
 			&frmHdr.DefaultEmailReportRecipient,
 			&frmHdr.EmailReportSent, &frmHdr.EmailedTo)
 		if err != nil {
@@ -113,7 +113,7 @@ func GetResponseHeader(db *sql.DB, HeaderID int) (WebFormHeader, error) {
 func GetResponseDetails(db *sql.DB, HeaderID int) ([]WebFormDetail, error) {
 
 	details := []WebFormDetail{}
-	sqlstr := `exec GetFormResponseDetails @HeaderID=? `
+	sqlstr := `exec [FormsGetResponseDetails] @HeaderID=? `
 	rows, err := db.Query(sqlstr, HeaderID)
 	if err != nil {
 		return details, err
@@ -138,6 +138,7 @@ func GetResponseDetails(db *sql.DB, HeaderID int) ([]WebFormDetail, error) {
 
 // --------------------------------------------------------------------------------------------------------------------
 // if the option to email new forms to a person such as a membership official is set, mark the email as sent
+/*
 func MarkEmailSuccess(db *sql.DB, HeaderID int, EmailedTo string) error {
 	sqlstr := `exec MarkEmailSuccess @HeaderID=?, @EmailedTo=? `
 	rows, err := db.Query(sqlstr, HeaderID, EmailedTo)
@@ -163,3 +164,4 @@ func MarkEmailSuccess(db *sql.DB, HeaderID int, EmailedTo string) error {
 		return errors.New("An unexpected server error occurred")
 	}
 }
+*/

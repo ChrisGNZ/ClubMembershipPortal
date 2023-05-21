@@ -31,6 +31,7 @@ type WebFormHeader struct {
 	TimeSubmitted               string
 	ClientIPAddress             string
 	RecaptchaV3Score            string
+	LoginSessionID              string
 	DefaultEmailReportRecipient string
 	EmailReportSent             string
 	EmailedTo                   string
