@@ -45,25 +45,62 @@
   </div>
 </nav>
 
-<div class="container-fluid">
+<div class="container-sm">
   <div class="row justify-content-center">
-    <div class="col-12 col-lg-9 col-xl-7">
+    <div class="col-12 col-lg-5 col-xl-5">
       <div class="card">
         <div class="card-body p-2 p-md-2">
-          <h5 class="mb-4 pb-2">SAWG Membership Application Form</h5>
+          <h5 class="mb-4 pb-2">SAWG Membership Application Form - Page 2</h5>
 
           <form name="report" id="reportform2" needs-validation action="/savemembershipappform2" method="post" >
 
-            {{ .HeaderID }}
+            <!-- hdr: {{ .HeaderID }} -->
+            <div class="row">
+              <div class="col-12">
+                <h6>Membership Subscription Fees and Payment Options</h6>
+              </div>
+            </div>
 
-            <div class="row mb-10">
+            <div class="row">
+              <div class="col-12">
+                <table class="table table-borderless ">
+                  <tr><td>Full Year<br/><span class="small">(1 Apr. to 31 Mar.)</span></td><td style="text-align:right"><strong>$80.00</strong><br/><span class="small">(NAW Members)</span></td></tr>
+                  <tr><td></td><td></td></tr>
+                  <tr><td></td><td style="text-align:right"><strong>$92.00</strong><br/><span class="small">(Non-NAW Members)</span></td></tr>
+                  <tr><td colspan="2"><hr/></td></tr>
+                  <tr><td>Half Year<br/><span class="small">(1 Oct. to 31 Mar.)</span></td><td style="text-align:right"><strong>$40.00</strong><br/><span class="small">(NAW Members)</span></td></tr>
+                  <tr><td></td><td></td></tr>
+                  <tr><td></td><td style="text-align:right"><strong>$52.00</strong><br/><span class="small">(Non-NAW Members)</span></td></tr>
+                  <tr><td colspan="2"><hr/></td></tr>
+                  <tr><td>Youth Members<br/><span class="small">(aged 21 or younger)</span></td><td style="text-align:right">50% of the above</td></tr>
+                  <tr><td colspan="2"><hr/></td></tr>
+                  <tr><td colspan="2">{{ .nawMembershipStatus }}You are a member of NAW (# 2905)</td></tr>
+                  <tr><td colspan="2">{{ .fullOrHalfYearStatus }}This is for a Full Year </td></tr>
+                  <tr><td colspan="2">We calculate that your  fee will be:</td></tr>
+                  <tr>
+                    <td></td>
+                    <td>
+                      <div class="form-floating">
+                        <input type="text" name="fee" id="fee" class="form-control" value="{{ .caclulatedFee }}" style="text-align: right" required />
+                        <label class="form-label" for="fee">Enter Fee to pay</label>
+                      </div>
+                    </td>
+                  </tr>
+                  <tr><td colspan="2">You may pay by direct credit to South Auckland Woodturners Guild. <br/>Account #
+                    <strong>12 3237 0021807 00</strong> <br/>  Please include your name in the transaction details.</td></tr>
+
+                </table>
+              </div>
+            </div>
+
+
+            <div class="row mb-2">
               <div class="col-12">
                 <div class="mt-5">
-                  <!--<button class="btn btn-warning btn-lg" onclick="ValidateReportForm()">Submit</button>-->
                   <button type="submit" class="g-recaptcha btn btn-warning btn-lg"
                           data-sitekey="{{ .recaptchaSiteKey }}"
                           data-callback='onSubmit'
-                          data-action='submit'>Submit</button>
+                          data-action='submit'>Submit and Finish Application</button>
 
                 </div>
               </div>
