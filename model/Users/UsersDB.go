@@ -1,14 +1,17 @@
 package Users
 
-import "database/sql"
+import (
+	"database/sql"
+	"errors"
+)
 
 // --------------------------------------------------------------------------------------------------------------------
-func AddUpdateUserFromLoginSessionAndMembershipAppForm(db *sql.DB, LoginSessionID string, FormHeaderID int) (string, int, error) {
+func AddUpdateUserFromLoginSessionAndMembershipAppForm(db *sql.DB, LoginSessionID string, FormHeaderID int) (string, int, int, error) {
 
 	sqlstr := ` exec UserAddUpdateFromLoginSessionAndMembershipAppForm @LoginSessionID=?, @FormHeaderID=? `
 	rows, err := db.Query(sqlstr, LoginSessionID, FormHeaderID)
 	if err != nil {
-		return "", 0, err
+		return "", 0, 0, err
 	}
 	defer func() {
 		if rows != nil {
@@ -18,13 +21,43 @@ func AddUpdateUserFromLoginSessionAndMembershipAppForm(db *sql.DB, LoginSessionI
 
 	result := "Unexpected Error (no response received from database server)"
 	var UserID int
+	var MemberID int
 	if rows.Next() {
-		err = rows.Scan(&result, &UserID)
+		err = rows.Scan(&result, &UserID, &MemberID)
 		if err != nil {
-			return "", 0, err
+			return "", 0, 0, err
 		}
 	}
-	return result, UserID, nil
+	return result, UserID, MemberID, nil
+}
+
+// --------------------------------------------------------------------------------------------------------------------
+func CalculateNewMembershipFee(db *sql.DB, userId int) (string, string, float64, error) {
+
+	sqlstr := ` exec UserCalculateNewMembershipFee @UserID=?  `
+	rows, err := db.Query(sqlstr, userId)
+	if err != nil {
+		return "", "", 0, err
+	}
+	defer func() {
+		if rows != nil {
+			rows.Close()
+		}
+	}()
+
+	nawMembershipStatus := ""
+	fullOrHalfYearStatus := ""
+	var calculatedFee float64
+	if rows.Next() {
+		err = rows.Scan(&nawMembershipStatus, &fullOrHalfYearStatus, &calculatedFee)
+		if err != nil {
+			return "", "", 0, err
+		}
+	} else {
+		return "", "", 0, errors.New("No rows returned from database")
+	}
+
+	return nawMembershipStatus, fullOrHalfYearStatus, calculatedFee, nil
 }
 
 // --------------------------------------------------------------------------------------------------------------------

@@ -52,7 +52,7 @@
         <div class="card-body p-2 p-md-2">
           <h5 class="mb-4 pb-2">SAWG Membership Application Form - Page 2</h5>
 
-          <form name="report" id="reportform2" needs-validation action="/savemembershipappform2" method="post" >
+          <form name="report" id="reportform2" needs-validation action="/savemembershipappform3" method="post" >
 
             <!-- hdr: {{ .HeaderID }} -->
             <div class="row">
@@ -64,25 +64,47 @@
             <div class="row">
               <div class="col-12">
                 <table class="table table-borderless ">
-                  <tr><td>Full Year<br/><span class="small">(1 Apr. to 31 Mar.)</span></td><td style="text-align:right"><strong>$80.00</strong><br/><span class="small">(NAW Members)</span></td></tr>
+                  <tr><td>Full Year<br/><span class="small">(When joining between 1 Apr. to 31 Mar.)</span></td><td style="text-align:right"><strong>$80.00</strong><br/><span class="small">(NAW Members)</span></td></tr>
                   <tr><td></td><td></td></tr>
                   <tr><td></td><td style="text-align:right"><strong>$92.00</strong><br/><span class="small">(Non-NAW Members)</span></td></tr>
                   <tr><td colspan="2"><hr/></td></tr>
-                  <tr><td>Half Year<br/><span class="small">(1 Oct. to 31 Mar.)</span></td><td style="text-align:right"><strong>$40.00</strong><br/><span class="small">(NAW Members)</span></td></tr>
+                  <tr><td>Half Year<br/><span class="small">(When joining between 1 Oct. to 31 Mar.)</span></td><td style="text-align:right"><strong>$40.00</strong><br/><span class="small">(NAW Members)</span></td></tr>
                   <tr><td></td><td></td></tr>
                   <tr><td></td><td style="text-align:right"><strong>$52.00</strong><br/><span class="small">(Non-NAW Members)</span></td></tr>
                   <tr><td colspan="2"><hr/></td></tr>
-                  <tr><td>Youth Members<br/><span class="small">(aged 21 or younger)</span></td><td style="text-align:right">50% of the above</td></tr>
+                  <tr>
+                    <td>Youth Members<br/><span class="small">(50% of the adult fee. Conditions Apply. The Membership Officer will contact you to discuss these conditions.)</span></td>
+                    <td style="text-align:right">
+                      <strong>Youth Member?</strong><br/>
+                      <input
+                              class="form-check-input"
+                              type="radio"
+                              name="youth"
+                              id="youth_yes"
+                              value="Yes"
+                      />
+                      <label class="form-check-label" for="youth_yes">Yes</label>
+                      <input
+                              class="form-check-input"
+                              type="radio"
+                              name="youth"
+                              id="youth_no"
+                              value="No"
+                              checked="checked"
+                      />
+                      <label class="form-check-label" for="youth_no">No</label>
+                    </td>
+                  </tr>
                   <tr><td colspan="2"><hr/></td></tr>
-                  <tr><td colspan="2">{{ .nawMembershipStatus }}You are a member of NAW (# 2905)</td></tr>
-                  <tr><td colspan="2">{{ .fullOrHalfYearStatus }}This is for a Full Year </td></tr>
-                  <tr><td colspan="2">We calculate that your  fee will be:</td></tr>
+                  <tr><td colspan="2"><strong>{{ .nawMembershipStatus }}</strong></td></tr>
+                  <tr><td colspan="2"><strong>{{ .fullOrHalfYearStatus }}</strong></td></tr>
+                  <tr><td colspan="2">We calculate that your New Membership Fee will be:</td></tr>
                   <tr>
                     <td></td>
                     <td>
                       <div class="form-floating">
-                        <input type="text" name="fee" id="fee" class="form-control" value="{{ .caclulatedFee }}" style="text-align: right" required />
-                        <label class="form-label" for="fee">Enter Fee to pay</label>
+                        <input type="text" name="fee" id="fee" class="form-control" value="{{ .calculatedFee }}" style="text-align: right" required />
+                        <label class="form-label" for="fee">To Pay</label>
                       </div>
                     </td>
                   </tr>
@@ -112,7 +134,10 @@
             <br/>
             <br/>
             <br/>
-
+            <input type="hidden" id="formheader" name="formheader" value="{{.HeaderID}}"/>
+            <input type="hidden" id="userid" name="userid"  value="{{.UserID}}"/>
+            <input type="hidden" id="memberid" name="memberid"  value="{{.MemberID}}"/>
+            <input type="hidden" id="calculated" name="calculated"  value="{{.calculatedFee}}"/>
           </form>
         </div>
       </div>
@@ -142,6 +167,21 @@
       console.log("form is not valid for: ",requiredElements);
     }
   }
+
+  document.addEventListener("click", evt => {
+    //  event delegation: only act if the click originated from input[type=radio]
+    if (evt.target.type === "radio") {
+      if (evt.target.id == "youth_yes" || evt.target.id == "youth_no") {
+        let calculatedFee = document.getElementById("calculated").value;
+        if (evt.target.id == "youth_yes") {
+          document.getElementById("fee").value = (calculatedFee / 2);
+        } else {
+          document.getElementById("fee").value = calculatedFee;
+        }
+      }
+      //console.log(`ID: ${evt.target.id},Value: ${evt.target.value},Text: ${document.querySelector(`label[for='${evt.target.id}']`).textContent}`);
+    }
+  })
 </script>
 </body>
 </html>
