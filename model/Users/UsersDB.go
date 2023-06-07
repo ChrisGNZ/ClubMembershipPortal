@@ -32,12 +32,12 @@ func AddUpdateUserFromLoginSessionAndMembershipAppForm(db *sql.DB, LoginSessionI
 }
 
 // --------------------------------------------------------------------------------------------------------------------
-func CalculateNewMembershipFee(db *sql.DB, userId int) (string, string, float64, error) {
+func CalculateNewMembershipFee(db *sql.DB, userId int) (string, string, string, float64, error) {
 
 	sqlstr := ` exec UserCalculateNewMembershipFee @UserID=?  `
 	rows, err := db.Query(sqlstr, userId)
 	if err != nil {
-		return "", "", 0, err
+		return "", "", "", 0, err
 	}
 	defer func() {
 		if rows != nil {
@@ -45,19 +45,20 @@ func CalculateNewMembershipFee(db *sql.DB, userId int) (string, string, float64,
 		}
 	}()
 
+	isFullYear := ""
 	nawMembershipStatus := ""
 	fullOrHalfYearStatus := ""
 	var calculatedFee float64
 	if rows.Next() {
-		err = rows.Scan(&nawMembershipStatus, &fullOrHalfYearStatus, &calculatedFee)
+		err = rows.Scan(&isFullYear, &nawMembershipStatus, &fullOrHalfYearStatus, &calculatedFee)
 		if err != nil {
-			return "", "", 0, err
+			return "", "", "", 0, err
 		}
 	} else {
-		return "", "", 0, errors.New("No rows returned from database")
+		return "", "", "", 0, errors.New("No rows returned from database")
 	}
 
-	return nawMembershipStatus, fullOrHalfYearStatus, calculatedFee, nil
+	return isFullYear, nawMembershipStatus, fullOrHalfYearStatus, calculatedFee, nil
 }
 
 // --------------------------------------------------------------------------------------------------------------------

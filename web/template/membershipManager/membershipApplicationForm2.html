@@ -64,13 +64,13 @@
             <div class="row">
               <div class="col-12">
                 <table class="table table-borderless ">
-                  <tr><td>Full Year<br/><span class="small">(When joining between 1 Apr. to 31 Mar.)</span></td><td style="text-align:right"><strong>$80.00</strong><br/><span class="small">(NAW Members)</span></td></tr>
-                  <tr><td></td><td></td></tr>
-                  <tr><td></td><td style="text-align:right"><strong>$92.00</strong><br/><span class="small">(Non-NAW Members)</span></td></tr>
-                  <tr><td colspan="2"><hr/></td></tr>
-                  <tr><td>Half Year<br/><span class="small">(When joining between 1 Oct. to 31 Mar.)</span></td><td style="text-align:right"><strong>$40.00</strong><br/><span class="small">(NAW Members)</span></td></tr>
-                  <tr><td></td><td></td></tr>
-                  <tr><td></td><td style="text-align:right"><strong>$52.00</strong><br/><span class="small">(Non-NAW Members)</span></td></tr>
+
+                  {{if .isFullYear }}
+                      <tr><td>Full Year<br/><span class="small">(When joining between 1 Apr. to 31 Mar.)</span></td><td style="text-align:right"><strong>$80.00</strong></td></tr>
+                  {{else}}
+                      <tr><td>Half Year<br/><span class="small">(When joining between 1 Oct. to 31 Mar.)</span></td><td style="text-align:right"><strong>$40.00</strong></td></tr>
+                  {{end}}
+
                   <tr><td colspan="2"><hr/></td></tr>
                   <tr>
                     <td>Youth Members<br/><span class="small">(50% of the adult fee. Conditions Apply. The Membership Officer will contact you to discuss these conditions.)</span></td>
@@ -96,7 +96,6 @@
                     </td>
                   </tr>
                   <tr><td colspan="2"><hr/></td></tr>
-                  <tr><td colspan="2"><strong>{{ .nawMembershipStatus }}</strong></td></tr>
                   <tr><td colspan="2"><strong>{{ .fullOrHalfYearStatus }}</strong></td></tr>
                   <tr><td colspan="2">We calculate that your New Membership Fee will be:</td></tr>
                   <tr>

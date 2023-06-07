@@ -67,12 +67,13 @@ func SaveForm(appCtx *appContextConfig.Application, formName string) gin.Handler
 			return
 		}
 
-		nawMembershipStatus, fullOrHalfYearStatus, calculatedFee, err := Users.CalculateNewMembershipFee(appCtx.DBconn, userId)
+		isFullYear, nawMembershipStatus, fullOrHalfYearStatus, calculatedFee, err := Users.CalculateNewMembershipFee(appCtx.DBconn, userId)
 		ctx.HTML(http.StatusOK, "membershipApplicationForm2.html",
 			gin.H{
 				"HeaderID":             HeaderID,
 				"UserID":               userId,
 				"MemberID":             memberID,
+				"isFullYear":           isFullYear,
 				"nawMembershipStatus":  nawMembershipStatus,  //{{ .nawMembershipStatus }}You are a member of NAW (# 2905)
 				"fullOrHalfYearStatus": fullOrHalfYearStatus, //{{ .fullOrHalfYearStatus }}This is for a Full Year
 				"calculatedFee":        calculatedFee,        //{{ .calculatedFee }}
