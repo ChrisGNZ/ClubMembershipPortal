@@ -182,7 +182,7 @@ func SaveFormFee(appCtx *appContextConfig.Application, formName string) gin.Hand
 				"calculatedFee":     calculatedFee, //algorithmically calculated Fee
 				"email":             member.Email,
 				"phone":             member.PreferredPhone,
-				"membershipOfficer": "membership@sawg.org.nz",
+				"membershipOfficer": "memsec@sawg.org.nz",
 			})
 	}
 }
