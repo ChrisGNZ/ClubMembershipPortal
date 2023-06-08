@@ -20,6 +20,8 @@
 !*.html
 !*.js
 !*.css
+
+!*.sql
 # !Makefile
 
 # ...even if they are in subdirectories
