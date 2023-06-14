@@ -1,6 +1,9 @@
+-- noinspection SqlNoDataSourceInspectionForFile
+
 go
-create or alter procedure LoginsLogSession @SessionID nvarchar(255)='', @Username nvarchar(255)='', @Nickname nvarchar(255)='', @Picture nvarchar(255)='',
-                                           @UserId nvarchar(255)='', @Email nvarchar(255)='', @EmailVerified nvarchar(255)='', @GivenName nvarchar(255)='', @FamilyName nvarchar(255)='', @ClientIP nvarchar(255)=''
+GO
+create or alter   procedure [dbo].[LoginsLogSession] @SessionID nvarchar(255)='', @Username nvarchar(255)='', @Nickname nvarchar(255)='', @Picture nvarchar(255)='',
+                                                     @UserId nvarchar(255)='', @Email nvarchar(255)='', @EmailVerified nvarchar(255)='', @GivenName nvarchar(255)='', @FamilyName nvarchar(255)='', @ClientIP nvarchar(255)=''
 as
     set nocount on
 declare @existingID int
@@ -27,9 +30,23 @@ where ((l.GivenName = @GivenName and l.FamilyName = @FamilyName) or l.Username=@
         insert into AuditTrail(TableName,DataID,EventDescription,SessionID,NewValue) select 'LoginSessionLog',@existingID,'Updated LoginSessionLog',@SessionID,'Username: '+isnull(@Username,'')+', Email: '+isnull(@email,'')
     end
 
-select 'OK' as [Result]
-    return
-go
+select 'OK' as [Result], 
+	isnull(m.MembershipStatus,''), 
+	isnull(u.ID,0) as [UsersUserID], 
+	isnull(mul.MemberID,0) as [MemberId],
+	isnull('|'+STRING_AGG(r.RoleName,'|')+'|','') as [Roles]
+from LoginSessionLog lsl
+         left join Users u on u.AuthUsername=lsl.Username
+         left join MemberUserLogin mul on mul.UserID=u.ID
+         left join Members m on m.ID=mul.MemberID
+		 left join UsersRoles ur on ur.UserID=u.ID
+		 left join Roles r on r.ID=ur.RoleID
+where  lsl.SessionID=@SessionID
+group by isnull(m.MembershipStatus,''),isnull(u.ID,0),isnull(mul.MemberID,0) 
+
+return
+GO
+
 -----------------------------------------------------------------------------------------------------------------------
 go
 create or alter procedure UserAddOrUpdate   @Username nvarchar(255)='', @Nickname nvarchar(255)='', @Picture nvarchar(255)='',

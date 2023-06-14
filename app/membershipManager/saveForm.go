@@ -15,9 +15,11 @@ import (
 func SaveForm(appCtx *appContextConfig.Application, formName string) gin.HandlerFunc {
 	return func(ctx *gin.Context) {
 		appCtx.LogInfo("Invoked SaveForm for : " + formName)
-		login := Logins.LogVisit(ctx, appCtx)
-		appCtx.LogInfo("Login Info : SessionID = " + login.SessionID + ", Username = " + login.Username + ", Email = " + login.Email + ", Name: " + login.GivenName + " " + login.FamilyName)
-		//displayName := Users.AddUpdateUser(appCtx.DBconn, login.Username, login.Nickname, login.Picture, login.UserId, login.Email, login.EmailVerified, login.GivenName, login.FamilyName)
+		login, membershipStatus, userID, memberID, roles := Logins.LogVisit(ctx, appCtx)
+		appCtx.LogInfo("Login Info : SessionID = " + login.SessionID + ", Username = " + login.Username +
+			", Email = " + login.Email + ", Name: " + login.GivenName + " " + login.FamilyName + " " +
+			membershipStatus + " " + strconv.FormatInt(userID, 10) + " " + strconv.FormatInt(memberID, 10) +
+			", Roles = " + roles)
 
 		//Call to ParseForm makes form fields available.
 		err := ctx.Request.ParseForm()
@@ -85,8 +87,12 @@ func SaveForm(appCtx *appContextConfig.Application, formName string) gin.Handler
 func SaveFormFee(appCtx *appContextConfig.Application, formName string) gin.HandlerFunc {
 	return func(ctx *gin.Context) {
 		appCtx.LogInfo("Invoked SaveForm for : " + formName)
-		login := Logins.LogVisit(ctx, appCtx)
-		appCtx.LogInfo("Login Info : SessionID = " + login.SessionID + ", Username = " + login.Username + ", Email = " + login.Email + ", Name: " + login.GivenName + " " + login.FamilyName)
+		login, membershipStatus, userID, memberID, roles := Logins.LogVisit(ctx, appCtx)
+		appCtx.LogInfo("Login Info : SessionID = " + login.SessionID + ", Username = " + login.Username +
+			", Email = " + login.Email + ", Name: " + login.GivenName + " " + login.FamilyName +
+			", membershipStatus = " + membershipStatus + ", userID = " + strconv.FormatInt(userID, 10) +
+			", memberID = " + strconv.FormatInt(memberID, 10) +
+			", roles = " + roles)
 
 		//Call to ParseForm makes form fields available.
 		err := ctx.Request.ParseForm()

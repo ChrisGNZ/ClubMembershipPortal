@@ -6,11 +6,12 @@ import (
 	"github.com/gin-contrib/sessions"
 	"github.com/gin-gonic/gin"
 	"math/rand"
+	"strconv"
 	"strings"
 	"time"
 )
 
-func LogVisit(ctx *gin.Context, appCtx *appContextConfig.Application) LoginStruct {
+func LogVisit(ctx *gin.Context, appCtx *appContextConfig.Application) (LoginStruct, string, int64, int64, string) {
 	session := sessions.Default(ctx)
 	profile := session.Get("profile") //https://auth0.com/docs/manage-users/user-accounts/user-profiles/normalized-user-profile-schema
 
@@ -37,13 +38,14 @@ func LogVisit(ctx *gin.Context, appCtx *appContextConfig.Application) LoginStruc
 	login.FamilyName = strings.Replace(fmt.Sprint(profile.(map[string]interface{})["family_name"]), "<nil>", "", 1)
 	login.ClientIP = ctx.ClientIP()
 
-	result, err := logSession(appCtx.DBconn, login)
+	result, MembershipStatus, UserID, MemberID, Roles, err := logSession(appCtx.DBconn, login)
 	if err != nil {
 		appCtx.LogInfo("An error occurred calling Logins.LogSession() : " + result + ", " + err.Error())
-		return LoginStruct{}
+		return LoginStruct{}, "", 0, 0, ""
 	}
-	appCtx.LogInfo("Logins.LogSession() returned: " + result)
-	return login
+
+	appCtx.LogInfo("Logins.LogSession() returned: " + result + ", userID: " + strconv.FormatInt(UserID, 10) + ", memberID: " + strconv.FormatInt(MemberID, 10))
+	return login, MembershipStatus, UserID, MemberID, Roles
 }
 
 // --------------------------------------------------------------------------------------------------------------------

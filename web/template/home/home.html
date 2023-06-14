@@ -9,10 +9,37 @@
 
 </head>
 <body>
-Welcome {{ .username }}!
+Welcome {{ .firstname }}!
 <br/>
 <br/>
 <!-- TO DO - generate menu based on the user's role, but for now just hard code the links -->
 <a href="/newmembershipappform">New Member Application Form</a>
+
+<!--
+
+are you recognised as a user?  if not,
+then offer two options:
+
+[New Membership Application]
+
+[I am existing Member of the Guild]
+
+
+-->
+<br/>
+<br/>
+<br/>
+Debugging Information:
+<br/>
+"loggedinusername": {{ .loggedinusername }}<br/>
+"firstname":        {{ .firstname }}<br/>
+"lastname":         {{ .lastname }}<br/>
+"avatar":           {{ .avatar }}<br/>
+"membershipstatus": {{ .membershipstatus }}<br/>
+"userid":           {{ .userid }}<br/>
+"memberid":         {{ .memberid }}<br/>
 </body>
 </html>
+<!--
+
+-->

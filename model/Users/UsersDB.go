@@ -6,7 +6,7 @@ import (
 )
 
 // --------------------------------------------------------------------------------------------------------------------
-func AddUpdateUserFromLoginSessionAndMembershipAppForm(db *sql.DB, LoginSessionID string, FormHeaderID int) (string, int, int, error) {
+func AddUpdateUserFromLoginSessionAndMembershipAppForm(db *sql.DB, LoginSessionID string, FormHeaderID int) (string, int64, int64, error) {
 
 	sqlstr := ` exec UserAddUpdateFromLoginSessionAndMembershipAppForm @LoginSessionID=?, @FormHeaderID=? `
 	rows, err := db.Query(sqlstr, LoginSessionID, FormHeaderID)
@@ -20,8 +20,8 @@ func AddUpdateUserFromLoginSessionAndMembershipAppForm(db *sql.DB, LoginSessionI
 	}()
 
 	result := "Unexpected Error (no response received from database server)"
-	var UserID int
-	var MemberID int
+	var UserID int64
+	var MemberID int64
 	if rows.Next() {
 		err = rows.Scan(&result, &UserID, &MemberID)
 		if err != nil {
@@ -32,7 +32,7 @@ func AddUpdateUserFromLoginSessionAndMembershipAppForm(db *sql.DB, LoginSessionI
 }
 
 // --------------------------------------------------------------------------------------------------------------------
-func CalculateNewMembershipFee(db *sql.DB, userId int) (string, string, string, float64, error) {
+func CalculateNewMembershipFee(db *sql.DB, userId int64) (string, string, string, float64, error) {
 
 	sqlstr := ` exec UserCalculateNewMembershipFee @UserID=?  `
 	rows, err := db.Query(sqlstr, userId)

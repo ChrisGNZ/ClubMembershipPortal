@@ -7,6 +7,7 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
+/*
 // ---------------------------------------------------------------------------------------------------------------------
 type UserInfo struct {
 	ID            int64
@@ -20,7 +21,7 @@ type UserInfo struct {
 	IsUserManager string
 	IsSysAdmin    string
 }
-
+*/
 // ---------------------------------------------------------------------------------------------------------------------
 
 func GetUsernameAndLogUserFromCtx(ctx *gin.Context, appCtx *appContextConfig.Application) string {
