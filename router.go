@@ -42,9 +42,11 @@ func NewRouter(appCtx *appContextConfig.Application) *gin.Engine {
 	//------------------------------------------------------------------------------------------------------------------
 	router.GET("/", middleware.IsAuthenticated, home.HomeHandler(appCtx))
 
-	router.GET("/newmembershipappform", middleware.IsAuthenticated, membershipManager.RenderForm(appCtx, "Membership Application Form"))
+	router.GET("/newmembershipappform", middleware.IsAuthenticated, membershipManager.RenderForm(appCtx, "Membership Application Form", "membershipApplicationForm.html"))
 	router.POST("/savemembershipappform", middleware.IsAuthenticated, membershipManager.SaveForm(appCtx, "Membership Application Form"))
 	router.POST("/savemembershipappform3", middleware.IsAuthenticated, membershipManager.SaveFormFee(appCtx, "Membership Application Form"))
+
+	router.GET("/existingmembershipregistration", middleware.IsAuthenticated, membershipManager.RenderForm(appCtx, "Existing Registration Form", "existingMembershipRegistration.html"))
 
 	//------------------------------------------------------------------------------------------------------------------
 	// troubleshooting

@@ -30,22 +30,34 @@ where ((l.GivenName = @GivenName and l.FamilyName = @FamilyName) or l.Username=@
         insert into AuditTrail(TableName,DataID,EventDescription,SessionID,NewValue) select 'LoginSessionLog',@existingID,'Updated LoginSessionLog',@SessionID,'Username: '+isnull(@Username,'')+', Email: '+isnull(@email,'')
     end
 
-select 'OK' as [Result], 
-	isnull(m.MembershipStatus,''), 
-	isnull(u.ID,0) as [UsersUserID], 
-	isnull(mul.MemberID,0) as [MemberId],
-	isnull('|'+STRING_AGG(r.RoleName,'|')+'|','') as [Roles]
-from LoginSessionLog lsl
-         left join Users u on u.AuthUsername=lsl.Username
-         left join MemberUserLogin mul on mul.UserID=u.ID
-         left join Members m on m.ID=mul.MemberID
-		 left join UsersRoles ur on ur.UserID=u.ID
-		 left join Roles r on r.ID=ur.RoleID
-where  lsl.SessionID=@SessionID
-group by isnull(m.MembershipStatus,''),isnull(u.ID,0),isnull(mul.MemberID,0) 
+select 'OK' as [Result], [MembershipStatus], [UsersUserID], [MemberId], '|'+STRING_AGG([Role],'|')+'|' as [Roles]
+from (
+	select distinct isnull(m.MembershipStatus,'') as [MembershipStatus], 
+		isnull(u.ID,0) as [UsersUserID], isnull(mul.MemberID,0) as [MemberId], isnull(r.RoleName,'') as [Role]
+	from LoginSessionLog lsl
+			 left join Users u on u.AuthUsername=lsl.Username
+			 left join MemberUserLogin mul on mul.UserID=u.ID
+			 left join Members m on m.ID=mul.MemberID
+			 left join UsersRoles ur on ur.UserID=u.ID
+			 left join Roles r on r.ID=ur.RoleID
+	where  lsl.SessionID=@SessionID
+	) s
+group by [MembershipStatus], [UsersUserID], [MemberId] 
 
 return
 GO
+
+
+
+
+
+
+
+
+
+
+
+
 
 -----------------------------------------------------------------------------------------------------------------------
 go

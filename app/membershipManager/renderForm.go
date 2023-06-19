@@ -10,7 +10,7 @@ import (
 	"net/http"
 )
 
-func RenderForm(appCtx *appContextConfig.Application, formName string) gin.HandlerFunc {
+func RenderForm(appCtx *appContextConfig.Application, formName string, templateName string) gin.HandlerFunc {
 	return func(ctx *gin.Context) {
 		appCtx.LogInfo("Invoked RenderForm for : " + formName)
 		Logins.LogVisit(ctx, appCtx)
@@ -22,6 +22,6 @@ func RenderForm(appCtx *appContextConfig.Application, formName string) gin.Handl
 			return
 		}
 		appCtx.LogInfo(fmt.Sprint("html size: ", len(html)))
-		ctx.HTML(http.StatusOK, "membershipApplicationForm.html", gin.H{"formHTML": template.HTML(html), "recaptchaSiteKey": appCtx.Config.RecaptchaSiteKey})
+		ctx.HTML(http.StatusOK, templateName, gin.H{"formHTML": template.HTML(html), "recaptchaSiteKey": appCtx.Config.RecaptchaSiteKey})
 	}
 }

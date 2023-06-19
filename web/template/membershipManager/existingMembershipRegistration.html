@@ -43,45 +43,33 @@
   </div>
 </nav>
 
-<div class="container-sm">
+<div class="container-fluid">
   <div class="row justify-content-center">
-    <div class="col-12 col-lg-5 col-xl-5">
+    <div class="col-12 col-lg-9 col-xl-7">
       <div class="card">
         <div class="card-body p-2 p-md-2">
-          <h5 class="mb-4 pb-2">SAWG Membership Application Form Submitted!</h5>
+          <h5 class="mb-4 pb-2">SAWG Existing Membership Registration</h5>
 
-            <div class="row">
+          <form name="report" id="reportform1" needs-validation action="/registerexistingmember" method="post" >
+
+            {{ .formHTML }}
+
+            <div class="row mb-10">
               <div class="col-12">
-                <h6>Thank You!</h6>
+                <div class="mt-5">
+
+                  <button type="submit" class="g-recaptcha btn btn-warning btn-lg"
+                          data-sitekey="{{ .recaptchaSiteKey }}"
+                          data-callback='onSubmit'
+                          data-action='submit'>Submit</button>
+
+                </div>
               </div>
             </div>
+            <br/>
+            <br/>
 
-            <div class="row">
-              <div class="col-12">
-                <p>Your New Member Application has been submitted and sent to the Club Membership Officer.</p>
-                <p>Please allow a few days for processing.</p>
-                <p>If we have any questions we will contact you either by email ({{.email}}) or phone ({{.phone}}).</p>
-                <p>Should you have any questions, please email: {{.membershipOfficer}}</p>
-              </div>
-            </div>
-
-          <div class="row">
-            <div class="col-12">
-              <h6>Reminder</h6>
-            </div>
-          </div>
-          <div class="row">
-            <div class="col-12">
-              <p>Look at <a href="https://sawg.org.nz">www.sawg.org.nz</a> to read all about our club activities.</p>
-            </div>
-          </div>
-
-          <div class="row">
-            <div class="col-12">
-              <p>Go Back To <a href="/">Membership Home</a></p>
-            </div>
-          </div>
-
+          </form>
         </div>
       </div>
     </div>
@@ -97,5 +85,19 @@
 
 <!--<script src="https://www.google.com/recaptcha/api.js"></script>-->
 
+<!-- application code -->
+<script>
+  function onSubmit(token) {
+    const reportForm1 = document.getElementById("reportform1");
+    let isValid = reportForm1.checkValidity();
+    if (isValid) {
+      document.getElementById("reportform1").submit();
+    } else {
+      reportForm1.reportValidity();
+      let requiredElements = reportForm1.querySelectorAll("[required]");
+      console.log("form is not valid for: ",requiredElements);
+    }
+  }
+</script>
 </body>
 </html>

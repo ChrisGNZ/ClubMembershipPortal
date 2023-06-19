@@ -21,16 +21,16 @@ func GenerateHTML(appCtx *appContextConfig.Application, formName string) (string
 
 		appCtx.LogInfo(fmt.Sprint("InputFieldName: ", q.InputFieldName, ", QuestionType: ", q.QuestionType, ", TemplateName: ", q.TemplateName, ", State: ", state))
 		if state == "start" {
-			if q.TemplateName == "StdText" || q.TemplateName == "StdTextArea" {
+			if strings.ToLower(q.TemplateName) == strings.ToLower("StdText") || strings.ToLower(q.TemplateName) == strings.ToLower("StdTextArea") {
 				state = "std"
 				html += stdField(q)
-			} else if q.TemplateName == "RadioButton" {
+			} else if strings.ToLower(q.TemplateName) == strings.ToLower("RadioButton") {
 				state = "radio"
 				radioName = q.InputFieldName
 				html += startRadio(q)
 			}
 		} else if state == "std" {
-			if q.TemplateName == "RadioButton" {
+			if strings.ToLower(q.TemplateName) == strings.ToLower("RadioButton") {
 				state = "radio"
 				radioName = q.InputFieldName
 				html += startRadio(q)
@@ -38,7 +38,7 @@ func GenerateHTML(appCtx *appContextConfig.Application, formName string) (string
 				html += stdField(q)
 			}
 		} else if state == "radio" {
-			if q.TemplateName == "RadioButton" { //continue with radio
+			if strings.ToLower(q.TemplateName) == strings.ToLower("RadioButton") { //continue with radio
 				if radioName != q.InputFieldName {
 					html += finishRadio()
 					radioName = q.InputFieldName
@@ -52,6 +52,7 @@ func GenerateHTML(appCtx *appContextConfig.Application, formName string) (string
 				html += stdField(q)
 			}
 		}
+		appCtx.LogInfo(fmt.Sprint("len(html) = ", len(html)))
 	} //end for range loop
 	if state == "radio" {
 		html += finishRadio()
@@ -90,7 +91,7 @@ func stdField(q WebFormQuestion) string {
 	rpl = strings.Replace(rpl, "{{ .questionID }}", q.InputFieldName, -1)
 	rpl = strings.Replace(rpl, "{{ .questionExtraText }}", q.QuestionExtraText, -1)
 	rpl = strings.Replace(rpl, "{{ .questionValue }}", "", -1)
-	if q.AnswerRequired == "Y" {
+	if strings.ToLower(q.AnswerRequired) == strings.ToLower("Y") {
 		rpl = strings.Replace(rpl, "{{ .required }}", "required", -1)
 	} else {
 		rpl = strings.Replace(rpl, "{{ .required }}", "", -1)
