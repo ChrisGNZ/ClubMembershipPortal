@@ -13,7 +13,8 @@ import (
 func RenderForm(appCtx *appContextConfig.Application, formName string, templateName string) gin.HandlerFunc {
 	return func(ctx *gin.Context) {
 		appCtx.LogInfo("Invoked RenderForm for : " + formName)
-		Logins.LogVisit(ctx, appCtx)
+
+		login, membershipStatus, userID, memberID, roles := Logins.LogVisit(ctx, appCtx)
 
 		html, err := Forms.GenerateHTML(appCtx, formName)
 		if err != nil {
@@ -22,6 +23,21 @@ func RenderForm(appCtx *appContextConfig.Application, formName string, templateN
 			return
 		}
 		appCtx.LogInfo(fmt.Sprint("html size: ", len(html)))
-		ctx.HTML(http.StatusOK, templateName, gin.H{"formHTML": template.HTML(html), "recaptchaSiteKey": appCtx.Config.RecaptchaSiteKey})
+		//ctx.HTML(http.StatusOK, templateName, gin.H{"formHTML": template.HTML(html), "recaptchaSiteKey": appCtx.Config.RecaptchaSiteKey})
+
+		ctx.HTML(http.StatusOK, templateName,
+			gin.H{
+				"formHTML":         template.HTML(html),
+				"recaptchaSiteKey": appCtx.Config.RecaptchaSiteKey,
+				"loggedinusername": login.Username,
+				"firstname":        login.GivenName,
+				"lastname":         login.FamilyName,
+				"avatar":           login.Picture,
+				"membershipstatus": membershipStatus,
+				"userid":           userID,
+				"memberid":         memberID,
+				"roles":            roles,
+			})
+
 	}
 }

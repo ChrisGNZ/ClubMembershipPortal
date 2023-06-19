@@ -52,7 +52,7 @@ func GenerateHTML(appCtx *appContextConfig.Application, formName string) (string
 				html += stdField(q)
 			}
 		}
-		appCtx.LogInfo(fmt.Sprint("len(html) = ", len(html)))
+		//appCtx.LogInfo(fmt.Sprint("len(html) = ", len(html)))
 	} //end for range loop
 	if state == "radio" {
 		html += finishRadio()
@@ -99,57 +99,3 @@ func stdField(q WebFormQuestion) string {
 	rpl = strings.Replace(rpl, "{{ .questionLabel }}", q.QuestionText, -1)
 	return rpl
 }
-
-/*
-
-
-		currentRadioButtonFieldName := ""
-		currentRadioButtonContainer := ""
-		currentRadioButtonChildren := ""
-
-
-		rpl := ""
-
-		//are we in the middle of a radio button?
-		if currentRadioButtonChildren != "" && q.TemplateName != "RadioButton" { // no, we no longer in Radio mode
-			//load up the individual buttons into the overal button container
-			rpl = strings.Replace(currentRadioButtonContainer, "{{ .radioButtonDetail }}", currentRadioButtonChildren, -1)
-			html += rpl
-			rpl = ""
-			currentRadioButtonChildren = ""
-		}
-
-		if q.TemplateName == "StdText" || q.TemplateName == "StdTextArea" {
-			rpl = strings.Replace(q.Template1, "{{ .questionType }}", q.QuestionType, -1)
-			rpl = strings.Replace(rpl, "{{ .InputFieldName }}", q.InputFieldName, -1)
-			rpl = strings.Replace(rpl, "{{ .questionID }}", q.InputFieldName, -1)
-			rpl = strings.Replace(rpl, "{{ .questionID }}", q.InputFieldName, -1)
-			rpl = strings.Replace(rpl, "{{ .questionValue }}", "", -1)
-			if q.AnswerRequired == "Y" {
-				rpl = strings.Replace(rpl, "{{ .required }}", "required", -1)
-			} else {
-				rpl = strings.Replace(rpl, "{{ .required }}", "", -1)
-			}
-			rpl = strings.Replace(rpl, "{{ .questionLabel }}", q.QuestionText, -1)
-			html += rpl
-			continue // continue to the next item in the FOR loop
-		}
-
-		if q.TemplateName == "RadioButton" { //we have either encountered a new radio, or are already in an existing radio button sequence
-			if q.InputFieldName != currentRadioButtonFieldName { //must be a new radio
-				currentRadioButtonContainer = strings.Replace(q.Template2, "{{ .InputFieldName }}", q.QuestionText, -1)
-				currentRadioButtonFieldName = q.InputFieldName
-				currentRadioButtonChildren = ""
-			}
-			radioBtn := q.Template3
-			radioBtn = strings.Replace(radioBtn, "{{ .radioButtonName }}", q.InputFieldName, -1)
-			radioBtn = strings.Replace(radioBtn, "{{ .radioButtonID }}", q.InputFieldName, -1)
-			radioBtn = strings.Replace(radioBtn, "{{ .radioButtonID }}", q.InputFieldName, -1)
-			radioBtn = strings.Replace(radioBtn, "{{ .radioButtonValue }}", q.RadioOption, -1)
-			currentRadioButtonChildren += radioBtn
-		}
-
-	}
-	return html, nil
-}
-*/
