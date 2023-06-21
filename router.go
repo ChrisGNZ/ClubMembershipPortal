@@ -47,6 +47,7 @@ func NewRouter(appCtx *appContextConfig.Application) *gin.Engine {
 	router.POST("/savemembershipappform3", middleware.IsAuthenticated, membershipManager.SaveFormFee(appCtx, "Membership Application Form"))
 
 	router.GET("/existingmembershipregistration", middleware.IsAuthenticated, membershipManager.RenderForm(appCtx, "Existing Registration Form", "existingMembershipRegistration.html"))
+	router.POST("/registerexistingmember", middleware.IsAuthenticated, membershipManager.RegisterExistingMembership(appCtx, "Existing Registration Form"))
 
 	//------------------------------------------------------------------------------------------------------------------
 	// troubleshooting

@@ -49,15 +49,19 @@
       <div class="card">
         <div class="card-body p-2 p-md-2">
           <h5 class="mb-4 pb-2">SAWG Existing Membership Registration</h5>
-
+          <p class="fw-lighter" style="font-size: smaller;">
+            If you are already a member of the South Auckland Woodturners Guild, then please fill in this form to register an account on this Membership Portal website.
+          </p>
           <form name="report" id="reportform1" needs-validation action="/registerexistingmember" method="post" >
 
             {{ .formHTML }}
 
-            <div class="row mb-10">
+            <div class="row mb-4">
               <div class="col-12">
                 <div class="mt-5">
-
+                  <p class="fw-lighter" style="font-size: smaller;">
+                    We will do our best to match up the information you have entered here with our membership records, but we may need to call or email you if we need further details.
+                  </p>
                   <button type="submit" class="g-recaptcha btn btn-warning btn-lg"
                           data-sitekey="{{ .recaptchaSiteKey }}"
                           data-callback='onSubmit'

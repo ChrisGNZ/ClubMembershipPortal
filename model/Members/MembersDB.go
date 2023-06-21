@@ -5,6 +5,7 @@ import (
 	"errors"
 )
 
+// --------------------------------------------------------------------------------------------------------------------
 func GetMember(db *sql.DB, memberID int64) (MemberInfo, error) {
 	sqlstr := ` exec MemberGet  @MemberID=?  `
 	rows, err := db.Query(sqlstr, memberID)
@@ -33,4 +34,9 @@ func GetMember(db *sql.DB, memberID int64) (MemberInfo, error) {
 		}
 	}
 	return m, nil
+}
+
+// --------------------------------------------------------------------------------------------------------------------
+func AttemptToMatchExistingMembership(db *sql.DB, LoginSessionID string, FormHeaderID int) (string, int64, int64, error) {
+
 }

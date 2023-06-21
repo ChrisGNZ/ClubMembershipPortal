@@ -241,3 +241,14 @@ values ('StdTextArea',
         <div class="row"><div class="col-md-12 mb-2"><span class="fw-lighter" style="font-size: smaller;">{{ .questionExtraText }}</span></div></div>')
 -----------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
+insert into [WebFormQuestions](FormID, InputFieldName, EntityName, QuestionText, QuestionType, TemplateName, Seq, AnswerRequired, QuestionExtraText)
+select 4, 'BadgeName', 'BadgeName', 'Badge Name', 'text', 'stdText', 10, 'Y', 'Name as shown on your SAWG Membership Badge'
+
+insert into [WebFormQuestions](FormID, InputFieldName, EntityName, QuestionText, QuestionType, TemplateName, Seq, AnswerRequired, QuestionExtraText)
+select 4, 'BadgeNumber', 'BadgeNumber', 'Membership Number', 'number', 'stdText', 20, 'N', 'Membership # as shown on your SAWG Membership Badge'
+
+insert into [WebFormQuestions](FormID, InputFieldName, EntityName, QuestionText, QuestionType, TemplateName, Seq, AnswerRequired)
+select 4, 'Email', 'Email', 'Email', 'email', 'stdText', 30, 'N'
+
+insert into [WebFormQuestions](FormID, InputFieldName, EntityName, QuestionText, QuestionType, TemplateName, Seq, AnswerRequired)
+select 4, 'PreferredPhone', 'PreferredPhone', 'Preferred Phone or Mobile', 'tel', 'stdText', 40, 'Y'

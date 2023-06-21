@@ -1,48 +1,46 @@
 go
-create or alter procedure [dbo].[FormsCreateResponseHeader] @FormName varchar(35), @ClientIPAddress varchar(75),
-                                                            @RecaptchaV3Score money, @LoginSessionID nvarchar(255)
+create  or alter  procedure [dbo].[FormsCreateResponseHeader] @FormName varchar(35), @ClientIPAddress varchar(75), @RecaptchaV3Score money, @LoginSessionID nvarchar(255)
 as
     set nocount on
 
 declare @webFormID int
-select @webFormID = wf.ID
-from WebForms wf
-where wf.FormName = @FormName
+select @webFormID = wf.ID from WebForms wf where wf.FormName = @FormName
+
     if @webFormID is null
         begin
-            insert into AuditTrail(TableName, SessionID, EventDescription, NewValue)
-            select 'WebFormResponseHeader', @LoginSessionID, 'Missing or Invalid Form Name', @FormName
+            insert into AuditTrail(TableName,SessionID,EventDescription,NewValue) select 'WebFormResponseHeader',@LoginSessionID,'Missing or Invalid Form Name',@FormName
 
             select 'Missing or Invalid Form Name' as [Result], 0 as [ID]
             return
         end
 
-declare
-    @outputIDTable table
-                   (
-                       HeaderID int
-                   )
+declare @userID int, @username nvarchar(255)
+select @username = Username from LoginSessionLog where SessionID = @LoginSessionID
 
-insert into [WebFormResponseHeader](FormID, ClientIPAddress, RecaptchaV3Score, LoginSessionID)
-output inserted.ID into @outputIDTable
-select @webFormID, @ClientIPAddress, @RecaptchaV3Score, @LoginSessionID
+select @userID = u.ID from Users u where u.AuthUsername = @username
+
+
+declare @outputIDTable table (HeaderID int)
+
+insert into [WebFormResponseHeader](FormID,ClientIPAddress,RecaptchaV3Score,LoginSessionID,UserID) output inserted.ID into @outputIDTable
+select @webFormID, @ClientIPAddress, @RecaptchaV3Score,@LoginSessionID,@userID
 
 declare @headerID int
-select @headerID = HeaderID
-from @outputIDTable
+select @headerID = HeaderID from @outputIDTable
+
     if @headerID is null
         begin
-            insert into AuditTrail(TableName, SessionID, EventDescription, NewValue)
-            select 'WebFormResponseHeader', @LoginSessionID, 'Error inserting into [WebFormResponseHeader]', @FormName
+            insert into AuditTrail(TableName,SessionID,EventDescription,NewValue) select 'WebFormResponseHeader',@LoginSessionID,'Error inserting into [WebFormResponseHeader]',@FormName
 
             select 'Error inserting into [WebFormResponseHeader]' as [Result], 0 as [ID]
             return
         end
 
-insert into AuditTrail(TableName, DataID, EventDescription, SessionID, NewValue)
-select 'WebFormResponseHeader', @headerID, 'Added new form response header', @LoginSessionID, @FormName
+insert into AuditTrail(TableName,DataID,EventDescription,SessionID,NewValue) select 'WebFormResponseHeader',@headerID,'Added new form response header',@LoginSessionID,@FormName
 
 select 'OK' as [Result], @headerID as [ID]
+go
+
 GO
 -----------------------------------------------------------------------------------------------------------------------
 go
