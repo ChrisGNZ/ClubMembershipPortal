@@ -235,14 +235,58 @@ func RegisterExistingMembership(appCtx *appContextConfig.Application, formName s
 			appCtx.LogInfo(fmt.Sprint("calling SaveWebFormResponseDetail(", HeaderID, key, val))
 			result, err := Forms.SaveWebFormResponseDetail(appCtx.DBconn, HeaderID, key, val)
 			if err != nil {
-				appCtx.LogInfo(fmt.Sprint("SaveWebFormResponseDetail() returned error: ", result.ResultMessage, err))
+				appCtx.LogInfo(fmt.Sprint("Forms.SaveWebFormResponseDetail() returned error: ", result.ResultMessage, err))
 				ctx.String(http.StatusBadGateway, "An unexpected server error occurred")
 				return
 			}
 		}
 
 		//now we need the logic to try and either automagically register a user who has an exact match on email address and a close? match on name?
-		ctx.String(http.StatusOK, "Data Saved. To Do: process the registration data")
+		matchStatus, matchedMembershipID, err := Forms.MatchExistingMembership(appCtx.DBconn, HeaderID)
+		if err != nil {
+			appCtx.LogInfo(fmt.Sprint("Forms.MatchExistingMembership() returned error: ", result.ResultMessage, err))
+			ctx.String(http.StatusBadGateway, "An unexpected server error occurred")
+			return
+		}
+
+		/*
+			if matchedMembershipID is not zero then that means we have successfully matched this user with an existing membership record!
+			--> now we need to update the linkage between user & member then display a logged-in member page
+
+			else if matchedMembershipID is zero then manual matching is required
+			1) add this user to the list of members waiting for manual matching
+			2) display a message to the user advising them that they will be contacted shortly
+			3) do we need to validate their email?  maybe we should
+		*/
+		if matchedMembershipID != 0 {
+			//matched to a member!  So now we can update that Member's status to be "Active"
+			// update [Members].membershipstatus and [MemberUserLogin] tables
+			updateResult, updatedMemberInfo, err := Members.UpdateMembershipStatus(appCtx.DBconn, userID, memberID, "Active")
+			if updateResult != "OK" || err != nil {
+				appCtx.LogInfo(fmt.Sprint("Forms.MatchExistingMembership() error: ", updateResult, ", err: ", err))
+				ctx.String(http.StatusBadGateway, "An unexpected server error occurred")
+				return
+			}
+			ctx.HTML(http.StatusOK, "homeActiveMember.html",
+				gin.H{
+					"loggedinusername": login.Username,
+					"firstname":        login.GivenName,
+					"lastname":         login.FamilyName,
+					"avatar":           login.Picture,
+					"membershipstatus": updatedMemberInfo.MembershipStatus,
+					"userid":           userID,
+					"memberid":         memberID,
+					"roles":            roles,
+				})
+			return
+		}
+
+		//otherwise, we are NOT matched to a member!
+		// we need to
+		//     1) add this user to the list of members waiting for manual matching
+		//     2) display a message to the user advising them that they will be contacted shortly
+		//     3) do we need to validate their email?  maybe we should
+		ctx.String(http.StatusOK, fmt.Sprint("matchStatus: ", matchStatus, ", Membership ID: ", matchedMembershipID))
 		/*
 			appCtx.LogInfo(fmt.Sprint("About to call AddUpdateUserFromLoginSessionAndMembershipAppForm(SessionID = ", login.SessionID, ", HeaderID = ", HeaderID))
 			linkresult, userId, memberID, err := Users.AddUpdateUserFromLoginSessionAndMembershipAppForm(appCtx.DBconn, login.SessionID, HeaderID)

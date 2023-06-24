@@ -155,3 +155,41 @@ select 'Manual Matching Required' as [MatchStatus], 0 as [MemberID]
     return
 go
 grant execute on MemberMatchExisting to TestPortalUser
+
+
+
+-----------------------------------------------------------------------------------------------------------------------
+-----------------------------------------------------------------------------------------------------------------------
+-----------------------------------------------------------------------------------------------------------------------
+
+
+
+go
+create procedure MemberUpdateStatus  @MemberID int, @UserID int, @Status nvarchar(50)
+as
+    set nocount on
+-------------------------------------------------------------------------------------------------
+    if not exists(select 1 from [Members] where ID = @MemberID)
+        begin
+            select 'Error: MemberID not found in the [Members] table' as [Result]
+            return
+        end
+
+    if exists(select 1 from [MemberUserLogin] where UserId = @UserID)
+        begin
+            select 'Error: UserID already exists in the [MemberUserLogin] table' as [Result]
+            return
+        end
+-------------------------------------------------------------------------------------------------
+    if not exists(select 1 from [MemberUserLogin] where UserId = @UserID and MemberID = @MemberID)
+        begin
+            insert into [MemberUserLogin](MemberID,UserID)
+            select @MemberID, @UserID
+        end
+
+update [Members] set MembershipStatus = isnull(@Status,'')
+
+select 'OK' as [Result]
+go
+grant execute on MemberUpdateStatus to TestPortalUser
+go

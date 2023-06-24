@@ -34,7 +34,7 @@ func HomeHandler(appCtx *appContextConfig.Application) gin.HandlerFunc {
 					[Existing Membership Registration]
 					(If you are an existing member of the Guild then click here to register online)
 
-			2) if the membership status is: "Active Member" then that means you are already fully enrolled (if new) or
+			2) if the membership status is: "Active" then that means you are already fully enrolled (if new) or
 				already registered (if existing).  Here we can do stuff like show your current subscription status
 				and your transaction history
 

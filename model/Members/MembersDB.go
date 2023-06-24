@@ -37,6 +37,34 @@ func GetMember(db *sql.DB, memberID int64) (MemberInfo, error) {
 }
 
 // --------------------------------------------------------------------------------------------------------------------
-func AttemptToMatchExistingMembership(db *sql.DB, LoginSessionID string, FormHeaderID int) (string, int64, int64, error) {
+func UpdateMembershipStatus(db *sql.DB, userID int64, memberID int64, newStatus string) (string, MemberInfo, error) {
+	sqlstr := ` exec MemberUpdateStatus  @MemberID=?, @UserID=?, @Status=?  `
+	rows, err := db.Query(sqlstr, memberID, userID, newStatus)
 
+	if err != nil {
+		return "Error calling db.Query()", MemberInfo{}, err
+	}
+	defer func() {
+		if rows != nil {
+			rows.Close()
+		}
+	}()
+
+	result := ""
+	if rows.Next() {
+		err = rows.Scan(&result)
+		if err != nil {
+			return result, MemberInfo{}, err
+		}
+	}
+	memberInfo := MemberInfo{}
+	if result == "OK" {
+		memberInfo, err = GetMember(db, memberID)
+		if err != nil {
+			return "error calling GetMember()", MemberInfo{}, err
+		}
+	}
+	return result, memberInfo, nil
 }
+
+// --------------------------------------------------------------------------------------------------------------------

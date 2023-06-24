@@ -110,6 +110,31 @@ func GetResponseHeader(db *sql.DB, HeaderID int) (WebFormHeader, error) {
 }
 
 // --------------------------------------------------------------------------------------------------------------------
+func MatchExistingMembership(db *sql.DB, HeaderID int) (string, int64, error) {
+	sqlstr := `exec [MemberMatchExisting] @FormHeaderID=? `
+	rows, err := db.Query(sqlstr, HeaderID)
+	if err != nil {
+		return "Error calling db.Query()", 0, err
+	}
+	defer func() {
+		if rows != nil {
+			rows.Close()
+		}
+	}()
+
+	matchStatus := ""
+	var memberID int64
+
+	if rows.Next() {
+		err = rows.Scan(&matchStatus, &memberID)
+		if err != nil {
+			return "Error calling rows.Scan()", 0, err
+		}
+	}
+	return matchStatus, memberID, nil
+}
+
+// --------------------------------------------------------------------------------------------------------------------
 func GetResponseDetails(db *sql.DB, HeaderID int) ([]WebFormDetail, error) {
 
 	details := []WebFormDetail{}

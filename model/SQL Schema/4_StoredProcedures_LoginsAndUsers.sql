@@ -2,19 +2,26 @@
 
 go
 GO
-create or alter   procedure [dbo].[LoginsLogSession] @SessionID nvarchar(255)='', @Username nvarchar(255)='', @Nickname nvarchar(255)='', @Picture nvarchar(255)='',
-                                                     @UserId nvarchar(255)='', @Email nvarchar(255)='', @EmailVerified nvarchar(255)='', @GivenName nvarchar(255)='', @FamilyName nvarchar(255)='', @ClientIP nvarchar(255)=''
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+create  or alter   procedure [dbo].[LoginsLogSession] @SessionID nvarchar(255)='', @Username nvarchar(255)='', @Nickname nvarchar(255)='', @Picture nvarchar(255)='',
+                                                      @UserId nvarchar(255)='', @Email nvarchar(255)='', @EmailVerified nvarchar(255)='', @GivenName nvarchar(255)='', @FamilyName nvarchar(255)='', @ClientIP nvarchar(255)=''
 as
     set nocount on
-declare @existingID int
 
-select @existingID = ID
-from LoginSessionLog l
-where ((l.GivenName = @GivenName and l.FamilyName = @FamilyName) or l.Username=@Username or l.UserId=@UserId or l.Email=@Email) and @SessionID=l.SessionID and @ClientIP=ClientIP
+    --------------------------------------------------------------------------------------------------------------------------------------------------
+    -- step 1: see if we already have an existing LoginSessionLog ID
+    declare @existingID int
+
+    select @existingID = ID
+    from LoginSessionLog l
+    where ((l.GivenName = @GivenName and l.FamilyName = @FamilyName) or l.Username=@Username or l.UserId=@UserId or l.Email=@Email) and @SessionID=l.SessionID and @ClientIP=ClientIP
 
     if @existingID is null
         begin
-
+            -- nope, we do not have an existing LoginSessionLog ID, so insert a new row
             -- add new logins entry
             declare @outputIDTable table (logID int)
 
@@ -25,26 +32,31 @@ where ((l.GivenName = @GivenName and l.FamilyName = @FamilyName) or l.Username=@
             declare @logId int
             select @logID = logID from @outputIDTable
             insert into AuditTrail(TableName,DataID,EventDescription,SessionID,NewValue) select 'LoginSessionLog',@logID,'Added new LoginSessionLog',@SessionID,'Username: '+isnull(@Username,'')+', Email: '+isnull(@email,'')
-        end else begin
-        update LoginSessionLog set SessionLastAccess = getdate() where ID = @existingID
-        insert into AuditTrail(TableName,DataID,EventDescription,SessionID,NewValue) select 'LoginSessionLog',@existingID,'Updated LoginSessionLog',@SessionID,'Username: '+isnull(@Username,'')+', Email: '+isnull(@email,'')
-    end
+        end
+    else
+        begin
+            -- yes, we already have a log entry for this session ID, so just update the SessionLastAccess column
+            update LoginSessionLog set SessionLastAccess = getdate() where ID = @existingID
+            insert into AuditTrail(TableName,DataID,EventDescription,SessionID,NewValue) select 'LoginSessionLog',@existingID,'Updated LoginSessionLog',@SessionID,'Username: '+isnull(@Username,'')+', Email: '+isnull(@email,'')
+        end
 
-select 'OK' as [Result], [MembershipStatus], [UsersUserID], [MemberId], '|'+STRING_AGG([Role],'|')+'|' as [Roles]
-from (
-	select distinct isnull(m.MembershipStatus,'') as [MembershipStatus], 
-		isnull(u.ID,0) as [UsersUserID], isnull(mul.MemberID,0) as [MemberId], isnull(r.RoleName,'') as [Role]
-	from LoginSessionLog lsl
-			 left join Users u on u.AuthUsername=lsl.Username
-			 left join MemberUserLogin mul on mul.UserID=u.ID
-			 left join Members m on m.ID=mul.MemberID
-			 left join UsersRoles ur on ur.UserID=u.ID
-			 left join Roles r on r.ID=ur.RoleID
-	where  lsl.SessionID=@SessionID
-	) s
-group by [MembershipStatus], [UsersUserID], [MemberId] 
+    --------------------------------------------------------------------------------------------------------------------------------------------------
+    -- step 2: return session log info along with any other info that we might have
+    select 'OK' as [Result], [MembershipStatus], [UsersUserID], [MemberId], '|'+STRING_AGG([Role],'|')+'|' as [Roles]
+    from (
+             select distinct isnull(m.MembershipStatus,'') as [MembershipStatus],
+                             isnull(u.ID,0) as [UsersUserID], isnull(mul.MemberID,0) as [MemberId], isnull(r.RoleName,'') as [Role]
+             from LoginSessionLog lsl
+                      left join Users u on u.AuthUsername=lsl.Username
+                      left join MemberUserLogin mul on mul.UserID=u.ID
+                      left join Members m on m.ID=mul.MemberID
+                      left join UsersRoles ur on ur.UserID=u.ID
+                      left join Roles r on r.ID=ur.RoleID
+             where  lsl.SessionID=@SessionID
+         ) s
+    group by [MembershipStatus], [UsersUserID], [MemberId]
 
-return
+    return
 GO
 
 
