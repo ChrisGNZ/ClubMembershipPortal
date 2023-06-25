@@ -45,7 +45,7 @@ func HomeHandler(appCtx *appContextConfig.Application) gin.HandlerFunc {
 
 		templateName := "home.html"
 		switch membershipStatus {
-		case "Active Member":
+		case "Active":
 			templateName = "homeActiveMember.html"
 		case "Awaiting Processing":
 			templateName = "homeAwaitingProcessing.html"

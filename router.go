@@ -38,7 +38,7 @@ func NewRouter(appCtx *appContextConfig.Application) *gin.Engine {
 	//router.GET("/logout", logout.Handler(appCtx))
 
 	//------------------------------------------------------------------------------------------------------------------
-	// HOME and application
+	// Application pages
 	//------------------------------------------------------------------------------------------------------------------
 	router.GET("/", middleware.IsAuthenticated, home.HomeHandler(appCtx))
 
@@ -48,6 +48,13 @@ func NewRouter(appCtx *appContextConfig.Application) *gin.Engine {
 
 	router.GET("/existingmembershipregistration", middleware.IsAuthenticated, membershipManager.RenderForm(appCtx, "Existing Registration Form", "existingMembershipRegistration.html"))
 	router.POST("/registerexistingmember", middleware.IsAuthenticated, membershipManager.RegisterExistingMembership(appCtx, "Existing Registration Form"))
+
+	router.GET("/listmembers", middleware.IsAuthenticated, membershipManager.ListAllUsersAndMembers(appCtx))
+
+	//------------------------------------------------------------------------------------------------------------------
+	// API webservice endpoints
+	//------------------------------------------------------------------------------------------------------------------
+	router.GET("/api/listmembers", middleware.IsAuthenticated, membershipManager.UsersAndMembersJSON(appCtx))
 
 	//------------------------------------------------------------------------------------------------------------------
 	// troubleshooting

@@ -151,6 +151,7 @@ create table [dbo].Members(
                               FirstName nvarchar(50) not null default(''),
                               LastName nvarchar(50) not null default(''),
                               Email nvarchar(100) not null default(''),   /* keep in mind some members, eg married couples, might share the same email, so allow for this */
+                              EmailVerified datetime null,
                               [ClubTitle] nvarchar(255) not null default(''), /* eg "President", "Treasurer", "Membership Officer", and so on.. leave blank for normal members.  Can be shown in badge label printing */
                               [Address] nvarchar(255) not null default(''),  /* i don't see any point in having structured address fields, eg street, building, suburb, etc */
                               Postcode nvarchar(12) not null default(''),
@@ -165,7 +166,8 @@ create table [dbo].Members(
                               LifeMember char(1) not null default('N'),  /* If 'Y' then this member is a Life Member and exempt from membership fees */
                               YearOfJoining int null,  /* what year first joined the club */
                               CalculatedJoiningFee money null,  /* estimated fee for new  member */
-                              SubmittedJoiningFee money null /* fee for new member as entered on the application form */
+                              SubmittedJoiningFee money null, /* fee for new member as entered on the application form */
+                              LastUpdated datetime not null default(getdate())
 )
 -----------------------------------------------------------------------------------------------------------------------
 create table [dbo].MemberUserLogin(
