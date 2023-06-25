@@ -151,7 +151,6 @@ create table [dbo].Members(
                               FirstName nvarchar(50) not null default(''),
                               LastName nvarchar(50) not null default(''),
                               Email nvarchar(100) not null default(''),   /* keep in mind some members, eg married couples, might share the same email, so allow for this */
-                              EmailVerified datetime null,
                               [ClubTitle] nvarchar(255) not null default(''), /* eg "President", "Treasurer", "Membership Officer", and so on.. leave blank for normal members.  Can be shown in badge label printing */
                               [Address] nvarchar(255) not null default(''),  /* i don't see any point in having structured address fields, eg street, building, suburb, etc */
                               Postcode nvarchar(12) not null default(''),

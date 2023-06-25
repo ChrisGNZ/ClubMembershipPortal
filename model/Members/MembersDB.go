@@ -68,3 +68,29 @@ func UpdateMembershipStatus(db *sql.DB, userID int64, memberID int64, newStatus 
 }
 
 // --------------------------------------------------------------------------------------------------------------------
+func GetUserMemberListing(db *sql.DB) ([]UserMemberListing, error) {
+
+	userMembers := []UserMemberListing{}
+
+	sqlstr := ` exec MemberListing;  `
+	rows, err := db.Query(sqlstr)
+	if err != nil {
+		return userMembers, err
+	}
+	defer func() {
+		if rows != nil {
+			rows.Close()
+		}
+	}()
+
+	u := UserMemberListing{}
+	for rows.Next() {
+		err := rows.Scan(&u.Key, &u.UserID, &u.MemberID, &u.Username, &u.AuthUsername, &u.EmailVerified, &u.ClubMembershipNumber, &u.FirstName, &u.LastName, &u.Email, &u.Address, &u.PreferredPhone, &u.EmergencyContact, &u.NAWMembershipNumber, &u.YouthMember, &u.LifeMember, &u.MembershipStatus)
+		if err != nil {
+			return userMembers, err
+		}
+		userMembers = append(userMembers, u)
+	}
+
+	return userMembers, nil
+}

@@ -26,3 +26,25 @@ type MemberInfo struct {
 	CalculatedJoiningFee            float64
 	SubmittedJoiningFee             float64
 }
+
+// --------------------------------------------------------------------------------------------------------------------
+// UserID	MemberID	Username	AuthUsername	EmailVerified	ClubMembershipNumber	FirstName	LastName	Email	Address	PreferredPhone	EmergencyContact	NAWMembershipNumber	YouthMember	LifeMember	MembershipStatus
+type UserMemberListing struct {
+	Key                  string
+	UserID               int64
+	MemberID             int64
+	Username             string
+	AuthUsername         string
+	EmailVerified        string
+	ClubMembershipNumber string
+	FirstName            string
+	LastName             string
+	Email                string
+	Address              string
+	PreferredPhone       string
+	EmergencyContact     string
+	NAWMembershipNumber  string
+	YouthMember          string
+	LifeMember           string
+	MembershipStatus     string
+}

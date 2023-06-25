@@ -193,3 +193,40 @@ select 'OK' as [Result]
 go
 grant execute on MemberUpdateStatus to TestPortalUser
 go
+
+
+
+-----------------------------------------------------------------------------------------------------------------------
+-----------------------------------------------------------------------------------------------------------------------
+-----------------------------------------------------------------------------------------------------------------------
+
+
+
+create or alter procedure MemberListing
+as
+    set nocount on
+select 'U='+convert(varchar,u.ID ) as [Key],
+       u.ID  as [UserID], isnull(m.ID,0) as [MemberID], isnull(u.Username,'') as [Username], isnull(u.AuthUsername,'') as [AuthUsername],
+       isnull(u.EmailVerified,'') as [EmailVerified], isnull(m.ClubMembershipNumber,'') as [ClubMembershipNumber], isnull(m.FirstName,'') as [FirstName],
+       isnull(m.LastName,'') as [LastName], isnull(m.Email,'') as [Email], isnull(m.[Address],'') as [Address], isnull(m.PreferredPhone,'') as [PreferredPhone],
+       isnull(m.EmergencyContact,'') as [EmergencyContact], isnull(m.NAWMembershipNumber,'') as [NAWMembershipNumber], isnull(m.YouthMember,'') as [YouthMember],
+       isnull(m.LifeMember,'') as [LifeMember], isnull(m.MembershipStatus ,'') as [MembershipStatus]
+from users u
+         left join MemberUserLogin mul on mul.UserID=u.ID
+         left join Members m on m.ID=mul.MemberID
+where mul.ID is null
+union
+select
+        'M='+convert(varchar,m.ID ) as [Key],
+        isnull(u.ID,0) as [UserID],  m.ID as [MemberID], isnull(u.Username,'') as [Username], isnull(u.AuthUsername,'') as [AuthUsername],
+        isnull(u.EmailVerified,'') as [EmailVerified], isnull(m.ClubMembershipNumber,'') as [ClubMembershipNumber], isnull(m.FirstName,'') as [FirstName],
+        isnull(m.LastName,'') as [LastName], isnull(m.Email,'') as [Email], isnull(m.[Address],'') as [Address], isnull(m.PreferredPhone,'') as [PreferredPhone],
+        isnull(m.EmergencyContact,'') as [EmergencyContact], isnull(m.NAWMembershipNumber,'') as [NAWMembershipNumber], isnull(m.YouthMember,'') as [YouthMember],
+        isnull(m.LifeMember,'') as [LifeMember], isnull(m.MembershipStatus ,'') as [MembershipStatus]
+from Members m
+         left join MemberUserLogin mul on mul.MemberID=m.ID
+         left join Users u on u.ID=mul.UserID
+
+go
+grant execute on MemberListing to testportaluser
+go
