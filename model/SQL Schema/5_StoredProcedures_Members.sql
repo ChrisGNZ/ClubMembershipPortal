@@ -201,8 +201,7 @@ go
 -----------------------------------------------------------------------------------------------------------------------
 
 
-
-create or alter procedure MemberListing
+create or alter  procedure [dbo].[MemberListing]
 as
     set nocount on
 select 'U='+convert(varchar,u.ID ) as [Key],
@@ -226,6 +225,18 @@ select
 from Members m
          left join MemberUserLogin mul on mul.MemberID=m.ID
          left join Users u on u.ID=mul.UserID
+UNION
+select 'S='+convert(varchar,lsl.SessionID ) as [Key],
+       isnull(u.ID,0) as [UserID], isnull(m.ID,0) as [MemberID], isnull(u.Username,'') as [Username], isnull(lsl.Username,'') as [AuthUsername],
+       isnull(u.EmailVerified,'') as [EmailVerified], isnull(m.ClubMembershipNumber,'') as [ClubMembershipNumber], isnull(m.FirstName,'') as [FirstName],
+       isnull(m.LastName,'') as [LastName], isnull(m.Email,'') as [Email], isnull(m.[Address],'') as [Address], isnull(m.PreferredPhone,'') as [PreferredPhone],
+       isnull(m.EmergencyContact,'') as [EmergencyContact], isnull(m.NAWMembershipNumber,'') as [NAWMembershipNumber], isnull(m.YouthMember,'') as [YouthMember],
+       isnull(m.LifeMember,'') as [LifeMember], isnull(m.MembershipStatus ,'') as [MembershipStatus]
+from LoginSessionLog lsl
+         left join Users u on u.AuthUsername=lsl.Username
+         left join MemberUserLogin mul on mul.UserID=u.ID
+         left join Members m on m.ID=mul.MemberID
+where u.ID is null
 
 go
 grant execute on MemberListing to testportaluser
