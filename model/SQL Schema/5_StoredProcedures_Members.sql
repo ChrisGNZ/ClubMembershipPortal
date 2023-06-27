@@ -1,5 +1,5 @@
 go
-create or alter procedure UserCalculateNewMembershipFee @UserID int   -- returns nawMembershipStatus, fullOrHalfYearStatus, calculatedFee
+create or alter  procedure [dbo].[UserCalculateNewMembershipFee] @UserID int   -- returns nawMembershipStatus, fullOrHalfYearStatus, calculatedFee
 as
     set nocount on
 declare @nawMembershipStatus varchar(255), @fullOrHalfYearStatus varchar(255), @calculatedFee money, @isFullYear char(1)
@@ -51,7 +51,10 @@ select @NAWnumber = isnull(NAWMembershipNumber,0) from [Members] m join [MemberU
     if @NAWnumber = 0
         begin
             select @nawMembershipStatus = 'You are not a member of NAW.'
-            select @calculatedFee = @calculatedFee + 12.00  --this hardcoded value should probably go into some sort of lookup table...
+            if abs(datediff(month,@joiningDate,getdate())) > 5 --new members (joined less than 5 months ago) are exempt from the $12 NAW fee
+                begin
+                    select @calculatedFee = @calculatedFee + 12.00  --this hardcoded value should probably go into some sort of lookup table...
+                end
         end else begin
         select @nawMembershipStatus = 'You are a member of NAW (# '+convert(varchar,@NAWnumber)+').'
     end
@@ -61,6 +64,7 @@ select 'Members',m.ID,'UserCalculateNewMembershipFee',u.ID,m.ID, 'Caculated fee:
 from [Members] m join [MemberUserLogin] mul on mul.MemberID = m.ID join [Users] u on u.ID=mul.UserID where u.ID = @UserID
 
 select @isFullYear as [isFullYear], @nawMembershipStatus as [nawMembershipStatus], @fullOrHalfYearStatus as[fullOrHalfYearStatus], @calculatedFee as [calculatedFee]
+GO
 go
 -----------------------------------------------------------------------------------------------------------------------
 go
