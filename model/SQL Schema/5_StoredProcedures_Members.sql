@@ -229,9 +229,10 @@ UNION
 select 'S='+convert(varchar,lsl.SessionID ) as [Key],
        isnull(u.ID,0) as [UserID], isnull(m.ID,0) as [MemberID], isnull(u.Username,'') as [Username], isnull(lsl.Username,'') as [AuthUsername],
        isnull(u.EmailVerified,'') as [EmailVerified], isnull(m.ClubMembershipNumber,'') as [ClubMembershipNumber], isnull(m.FirstName,'') as [FirstName],
-       isnull(m.LastName,'') as [LastName], isnull(m.Email,'') as [Email], isnull(m.[Address],'') as [Address], isnull(m.PreferredPhone,'') as [PreferredPhone],
+       isnull(m.LastName,'') as [LastName], isnull(lsl.Username,'') as [Email], isnull(m.[Address],'') as [Address], isnull(m.PreferredPhone,'') as [PreferredPhone],
        isnull(m.EmergencyContact,'') as [EmergencyContact], isnull(m.NAWMembershipNumber,'') as [NAWMembershipNumber], isnull(m.YouthMember,'') as [YouthMember],
-       isnull(m.LifeMember,'') as [LifeMember], isnull(m.MembershipStatus ,'') as [MembershipStatus]
+       isnull(m.LifeMember,'') as [LifeMember],
+       'Incomplete Registration' as [MembershipStatus]
 from LoginSessionLog lsl
          left join Users u on u.AuthUsername=lsl.Username
          left join MemberUserLogin mul on mul.UserID=u.ID
@@ -241,3 +242,87 @@ where u.ID is null
 go
 grant execute on MemberListing to testportaluser
 go
+
+
+
+-----------------------------------------------------------------------------------------------------------------------
+-----------------------------------------------------------------------------------------------------------------------
+-----------------------------------------------------------------------------------------------------------------------
+
+
+
+
+create procedure MemberLookupKey @key varchar(35)
+as
+    set nocount on
+    /*
+    S= session id
+    M= member id
+    U= user id
+    */
+--declare @key varchar(35) = 'S=8934037'
+declare @KeyType varchar(35), @KeyValue int, @sessionID int, @userID int, @memberID int
+
+    if len(@key) < 3
+        begin
+            select 'Invalid Key: '+@key as [Result], '' as [KeyType], 0 as [KeyValue]
+            return
+        end
+
+    if @key like 'S=%'
+        begin
+            select @KeyType = 'SessionID'
+            if isnumeric(SUBSTRING(@key,3,99))=0
+                begin
+                    select 'Key value must be numeric' as [Result], '' as [KeyType], 0 as [KeyValue]
+                    return
+                end
+            select @KeyValue = convert(int,SUBSTRING(@key,3,99))
+            if not exists(select 1 from LoginSessionLog where SessionID=@KeyValue)
+                begin
+                    select 'Session ID # '+convert(varchar,@KeyValue)+' not found' as [Result], '' as [KeyType], 0 as [KeyValue]
+                    return
+                end
+        end else if @key like 'M=%'
+        begin
+            select @KeyType = 'MemberID'
+            if isnumeric(SUBSTRING(@key,3,99))=0
+                begin
+                    select 'Key value must be numeric' as [Result], '' as [KeyType], 0 as [KeyValue]
+                    return
+                end
+            select @KeyValue = convert(int,SUBSTRING(@key,3,99))
+            if not exists(select 1 from Members where ID=@KeyValue)
+                begin
+                    select 'Member ID # '+convert(varchar,@KeyValue)+' not found' as [Result], '' as [KeyType], 0 as [KeyValue]
+                    return
+                end
+        end else if  @key like 'U=%'
+        begin
+            select @KeyType = 'UserID'
+            if isnumeric(SUBSTRING(@key,3,99))=0
+                begin
+                    select 'Key value must be numeric' as [Result], '' as [KeyType], 0 as [KeyValue]
+                    return
+                end
+            select @KeyValue = convert(int,SUBSTRING(@key,3,99))
+            if not exists(select 1 from Users where ID=@KeyValue)
+                begin
+                    select 'User ID # '+convert(varchar,@KeyValue)+' not found' as [Result], '' as [KeyType], 0 as [KeyValue]
+                    return
+                end
+        end else begin
+        select 'Invalid Key: '+@key as [Result], '' as [KeyType], 0 as [KeyValue]
+        return
+    end
+select 'OK' as [Result], @KeyType as [KeyType], @KeyValue as [KeyValue]
+go
+grant execute on MemberLookupKey to TestPortalUser
+go
+
+
+-----------------------------------------------------------------------------------------------------------------------
+-----------------------------------------------------------------------------------------------------------------------
+-----------------------------------------------------------------------------------------------------------------------
+
+

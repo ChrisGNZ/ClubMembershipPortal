@@ -50,6 +50,7 @@ func NewRouter(appCtx *appContextConfig.Application) *gin.Engine {
 	router.POST("/registerexistingmember", middleware.IsAuthenticated, membershipManager.RegisterExistingMembership(appCtx, "Existing Registration Form"))
 
 	router.GET("/listmembers", middleware.IsAuthenticated, membershipManager.ListAllUsersAndMembers(appCtx))
+	router.GET("/viewmember", middleware.IsAuthenticated, membershipManager.ViewMemberDetails(appCtx))
 
 	//------------------------------------------------------------------------------------------------------------------
 	// API webservice endpoints

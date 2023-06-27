@@ -219,14 +219,17 @@ values ('RadioButtonHeader',
 
 insert into WebFormQuestionTemplates([QuestionTemplateName], [QuestionTemplateText])
 values ('StdText', '<div class="row">
-    <div class="col-md-12 mb-2">
-        <div class="form-floating">
-            <input type="{{ .questionType }}" name="{{ .InputFieldName }}" id="{{ .questionID }}" class="form-control" value="{{ .questionValue }}" {{ .required }} />
-            <label class="form-label" for="{{ .questionID }}">{{ .questionLabel }}</label>
-        </div>
-    </div>
+<div class="row">
+	<div class="col-md-12 mb-1">
+		<div class="form-floating">
+			<input type="{{ .questionType }}" name="{{ .InputFieldName }}" id="{{ .questionID }}" class="form-control" value="{{ .questionValue }}" {{ .required }} />
+			<label class="form-label text-dark" for="{{ .questionID }}">{{ .questionLabel }}</label>
+		</div>
+	</div>
 </div>
-<div class="row"><div class="col-md-12 mb-4"><span class="fw-lighter" style="font-size: smaller;">{{ .questionExtraText }}</span></div></div>')
+<div class="row">
+	<div class="col-md-12 mb-1"><span class="text-dark" style="font-size: smaller;">{{ .questionExtraText }}</span></div>
+</div>')
 
 insert into WebFormQuestionTemplates([QuestionTemplateName], [QuestionTemplateText])
 values ('StdTextArea',

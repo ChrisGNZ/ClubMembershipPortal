@@ -94,3 +94,30 @@ func GetUserMemberListing(db *sql.DB) ([]UserMemberListing, error) {
 
 	return userMembers, nil
 }
+
+// --------------------------------------------------------------------------------------------------------------------
+func ValidateMemberUserSessionLookupKey(db *sql.DB, key string) (string, string, int64, error) {
+
+	sqlstr := ` exec MemberLookupKey @key = ?  `
+	rows, err := db.Query(sqlstr, key)
+	if err != nil {
+		return "Error calling db.Query", "", 0, err
+	}
+	defer func() {
+		if rows != nil {
+			rows.Close()
+		}
+	}()
+
+	result := "No value returned from db.Query()"
+	keyType := ""
+	var keyValue int64 = 0
+	if rows.Next() {
+		err := rows.Scan(&result, &keyType, &keyValue)
+		if err != nil {
+			return "Error calling rows.Scan", "", 0, err
+		}
+	}
+
+	return result, keyType, keyValue, nil
+}
